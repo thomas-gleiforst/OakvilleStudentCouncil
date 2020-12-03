@@ -4,14 +4,44 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
+  AllMembers: undefined;
+  Calendar: undefined;
+  CreateEvent: undefined;
+  CreateUser: undefined;
+  Home: undefined;
+  Main: undefined;
+  MeetingStat: undefined;
+  QRCode: undefined;
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+export type AllMembersParamList = {
+  AllMembersScreen: undefined;
+}
+
+export type CalendarParamList = {
+  CalendarScreen: undefined;
+}
+
+export type CreateEventParamList = {
+  CreateEventScreen: undefined;
+}
+
+export type CreateUserParamList = {
+  CreateUserScreen: undefined;
+}
+
+export type HomeParamList = {
+  HomeScreen: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type MainParamList = {
+  MainScreen: undefined;
 };
+
+export type MeetingStatParamList = {
+  MeetingStatScreen: undefined;
+}
+
+export type QRCodeParamList = {
+  QRCodeScreen: undefined;
+}

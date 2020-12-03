@@ -5,9 +5,15 @@ import * as React from 'react';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
+import AllMembersScreen from '../screens/AllMembersScreen';
+import CalendarScreen from '../screens/CalendarScreen';
+import CreateEventScreen from '../screens/CreateEventScreen';
+import CreateUserScreen from '../screens/CreateUserScreen';
+import HomeScreen from '../screens/HomeScreen';
+import MainScreen from '../screens/MainScreen';
+import MeetingStatScreen from '../screens/MeetingStatScreen';
+import QRCodeScreen from '../screens/QRCodeScreen';
+import { BottomTabParamList, AllMembersParamList, CalendarParamList, CreateEventParamList, CreateUserParamList, HomeParamList, MainParamList, MeetingStatParamList, QRCodeParamList } from '../types';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -16,18 +22,60 @@ export default function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Home"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneNavigator}
+        name="AllMembers"
+        component={AllMembersNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoNavigator}
+        name="Calendar"
+        component={CalendarNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="CreateEvent"
+        component={CreateEventNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="CreateUser"
+        component={CreateUserNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Home"
+        component={HomeNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Main"
+        component={MainNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="MeetingStat"
+        component={MeetingStatNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="QRCode"
+        component={QRCodeNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
         }}
@@ -44,30 +92,114 @@ function TabBarIcon(props: { name: string; color: string }) {
 
 // Each tab has its own navigation stack, you can read more about this pattern here:
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
-const TabOneStack = createStackNavigator<TabOneParamList>();
+const AllMembersStack = createStackNavigator<AllMembersParamList>();
 
-function TabOneNavigator() {
+function AllMembersNavigator() {
   return (
-    <TabOneStack.Navigator>
-      <TabOneStack.Screen
-        name="TabOneScreen"
-        component={TabOneScreen}
-        options={{ headerTitle: 'Tab One Title' }}
+    <AllMembersStack.Navigator>
+      <AllMembersStack.Screen
+        name="AllMembersScreen"
+        component={AllMembersScreen}
+        options={{ headerTitle: 'All Members' }}
       />
-    </TabOneStack.Navigator>
+    </AllMembersStack.Navigator>
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const CalendarStack = createStackNavigator<CalendarParamList>();
 
-function TabTwoNavigator() {
+function CalendarNavigator() {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
-        name="TabTwoScreen"
-        component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title' }}
+    <CalendarStack.Navigator>
+      <CalendarStack.Screen
+        name="CalendarScreen"
+        component={CalendarScreen}
+        options={{ headerTitle: 'Calendar' }}
       />
-    </TabTwoStack.Navigator>
+    </CalendarStack.Navigator>
+  );
+}
+
+const CreateEventStack = createStackNavigator<CreateEventParamList>();
+
+function CreateEventNavigator() {
+  return (
+    <CreateEventStack.Navigator>
+      <CreateEventStack.Screen
+        name="CreateEventScreen"
+        component={CreateEventScreen}
+        options={{ headerTitle: 'Create Event' }}
+      />
+    </CreateEventStack.Navigator>
+  );
+}
+
+const CreateUserStack = createStackNavigator<CreateUserParamList>();
+
+function CreateUserNavigator() {
+  return (
+    <CreateUserStack.Navigator>
+      <CreateUserStack.Screen
+        name="CreateUserScreen"
+        component={CreateUserScreen}
+        options={{ headerTitle: 'Create User' }}
+      />
+    </CreateUserStack.Navigator>
+  );
+}
+
+const HomeStack = createStackNavigator<HomeParamList>();
+
+function HomeNavigator() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{ headerTitle: 'Home Screen' }}
+      />
+    </HomeStack.Navigator>
+  );
+}
+
+const MainStack = createStackNavigator<MainParamList>();
+
+function MainNavigator() {
+  return (
+    <MainStack.Navigator>
+      <MainStack.Screen
+        name="MainScreen"
+        component={MainScreen}
+        options={{ headerTitle: 'Main Screen' }}
+      />
+    </MainStack.Navigator>
+  );
+}
+
+const MeetingStatStack = createStackNavigator<MeetingStatParamList>();
+
+function MeetingStatNavigator() {
+  return (
+    <MeetingStatStack.Navigator>
+      <MeetingStatStack.Screen
+        name="MeetingStatScreen"
+        component={MeetingStatScreen}
+        options={{ headerTitle: 'Meeting Stats' }}
+      />
+    </MeetingStatStack.Navigator>
+  );
+}
+
+const QRCodeStack = createStackNavigator<QRCodeParamList>();
+
+function QRCodeNavigator() {
+  return (
+    <QRCodeStack.Navigator>
+      <QRCodeStack.Screen
+        name="QRCodeScreen"
+        component={QRCodeScreen}
+        options={{ headerTitle: 'QR Code' }}
+      />
+    </QRCodeStack.Navigator>
   );
 }

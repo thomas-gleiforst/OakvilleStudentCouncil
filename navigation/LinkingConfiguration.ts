@@ -6,16 +6,46 @@ export default {
     screens: {
       Root: {
         screens: {
-          TabOne: {
+          AllMember: {
             screens: {
-              TabOneScreen: 'one',
+              AllMemberScreen: 'one'
             },
           },
-          TabTwo: {
+          Calendar: {
             screens: {
-              TabTwoScreen: 'two',
+              CalendarScreen: 'two'
             },
           },
+          CreateEvent: {
+            screens: {
+              CreateEventScreen: 'three'
+            },
+          },
+          CreateUser: {
+            screens: {
+              CreateUserScreen: 'four'
+            },
+          },
+          Home: {
+            screens: {
+              HomeScreen: 'five',
+            },
+          },
+          Main: {
+            screens: {
+              MainScreen: 'six',
+            },
+          },
+          MeetingStat: {
+            screens: {
+              MeetingStatScreen: 'seven'
+            },
+          },
+          QRCode: {
+            screens: {
+              QRCodeScreen: 'eight'
+            }
+          }
         },
       },
       NotFound: '*',
