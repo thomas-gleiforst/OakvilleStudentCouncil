@@ -1,18 +1,33 @@
-import express from 'express'
+import 'dotenv/config'
+import cors from 'cors'
+import express, { Request, Response } from 'express'
+import 'reflect-metadata'
+import { createConnection } from 'typeorm'
 
-const app = express()
-const port = process.env.PORT || 8080
+// Route imports
+import { userApi } from './routes'
 
-// TODO: Configure body parser
+createConnection().then((connection) => {
 
-// Home route
-app.get('/', (req, res) => {
+  // Create and setup Express app
+  const app = express()
+  const port = process.env.PORT || 8080
+
+  // TODO: Implement more strict CORS system for production
+  app.use(cors())
+  app.use(express.json()) // Expect a JSON response
+
+  // Home route
+  app.get('/', (req, res) => {
     res.send('Hello World!')
-})
+  })
 
-// Register routes
+  // User route
+  app.use(userApi)
 
-// Start the server
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}.`)
+  // Start the server
+  // This option will erase the database every time we start the server
+  app.listen(port, () => {
+    console.log(`Server running at port ${port}`)
+  })
 })
