@@ -1,15 +1,15 @@
-import { Column, Entity, PrimaryColumn, CreateDateColumn} from "typeorm"
+import { Column, Entity, PrimaryColumn, CreateDateColumn } from "typeorm"
 
 // TODO: Set column types of necessary (default in varchar255 or int)
 // TODO: Should loginDate() column be type @UpdateDateColumn?
 @Entity()
-export class Student {
+export class Admin {
 
   @PrimaryColumn("char", {length: 80})
   email!: string;
 
   @Column("varchar", {length: 1024})
-  stuPass!: string;
+  adminPass!: string;
 
   @Column("char", {length: 80})
   firstName!: string;
@@ -25,7 +25,4 @@ export class Student {
 
   @CreateDateColumn("timestamp")
   joinDate!: Date;
-
-  @Column("smallint")
-  points!: Number;
 }
