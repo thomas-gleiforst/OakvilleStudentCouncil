@@ -1,19 +1,29 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react";
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import AllMembersScreen from '../screens/AllMembersScreen';
-import CalendarScreen from '../screens/CalendarScreen';
-import CreateEventScreen from '../screens/CreateEventScreen';
-import CreateUserScreen from '../screens/CreateUserScreen';
-import HomeScreen from '../screens/HomeScreen';
-import MainScreen from '../screens/MainScreen';
-import MeetingStatScreen from '../screens/MeetingStatScreen';
-import QRCodeScreen from '../screens/QRCodeScreen';
-import { BottomTabParamList, AllMembersParamList, CalendarParamList, CreateEventParamList, CreateUserParamList, HomeParamList, MainParamList, MeetingStatParamList, QRCodeParamList } from '../types';
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
+import AllMembersScreen from "../screens/AllMembersScreen";
+import CalendarScreen from "../screens/CalendarScreen";
+import CreateEventScreen from "../screens/CreateEventScreen";
+import CreateUserScreen from "../screens/CreateUserScreen";
+import HomeScreen from "../screens/HomeScreen";
+import MainScreen from "../screens/MainScreen";
+import MeetingStatScreen from "../screens/MeetingStatScreen";
+import QRCodeScreen from "../screens/QRCodeScreen";
+import {
+  BottomTabParamList,
+  AllMembersParamList,
+  CalendarParamList,
+  CreateEventParamList,
+  CreateUserParamList,
+  HomeParamList,
+  MainParamList,
+  MeetingStatParamList,
+  QRCodeParamList,
+} from "../types";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -23,61 +33,78 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
+      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
+    >
       <BottomTab.Screen
         name="AllMembers"
         component={AllMembersNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="Calendar"
         component={CalendarNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="CreateEvent"
         component={CreateEventNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="CreateUser"
         component={CreateUserNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="Home"
         component={HomeNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="Main"
         component={MainNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="MeetingStat"
         component={MeetingStatNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
         name="QRCode"
         component={QRCodeNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
         }}
       />
     </BottomTab.Navigator>
@@ -100,7 +127,7 @@ function AllMembersNavigator() {
       <AllMembersStack.Screen
         name="AllMembersScreen"
         component={AllMembersScreen}
-        options={{ headerTitle: 'All Members' }}
+        options={{ headerTitle: "All Members" }}
       />
     </AllMembersStack.Navigator>
   );
@@ -114,7 +141,7 @@ function CalendarNavigator() {
       <CalendarStack.Screen
         name="CalendarScreen"
         component={CalendarScreen}
-        options={{ headerTitle: 'Calendar' }}
+        options={{ headerTitle: "Calendar" }}
       />
     </CalendarStack.Navigator>
   );
@@ -128,7 +155,7 @@ function CreateEventNavigator() {
       <CreateEventStack.Screen
         name="CreateEventScreen"
         component={CreateEventScreen}
-        options={{ headerTitle: 'Create Event' }}
+        options={{ headerTitle: "Create Event" }}
       />
     </CreateEventStack.Navigator>
   );
@@ -142,7 +169,7 @@ function CreateUserNavigator() {
       <CreateUserStack.Screen
         name="CreateUserScreen"
         component={CreateUserScreen}
-        options={{ headerTitle: 'Create User' }}
+        options={{ headerTitle: "Create User" }}
       />
     </CreateUserStack.Navigator>
   );
@@ -156,7 +183,7 @@ function HomeNavigator() {
       <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
-        options={{ headerTitle: 'Home Screen' }}
+        options={{ headerTitle: "Home Screen" }}
       />
     </HomeStack.Navigator>
   );
@@ -170,7 +197,7 @@ function MainNavigator() {
       <MainStack.Screen
         name="MainScreen"
         component={MainScreen}
-        options={{ headerTitle: 'Main Screen' }}
+        options={{ headerTitle: "Main Screen" }}
       />
     </MainStack.Navigator>
   );
@@ -184,7 +211,7 @@ function MeetingStatNavigator() {
       <MeetingStatStack.Screen
         name="MeetingStatScreen"
         component={MeetingStatScreen}
-        options={{ headerTitle: 'Meeting Stats' }}
+        options={{ headerTitle: "Meeting Stats" }}
       />
     </MeetingStatStack.Navigator>
   );
@@ -198,7 +225,7 @@ function QRCodeNavigator() {
       <QRCodeStack.Screen
         name="QRCodeScreen"
         component={QRCodeScreen}
-        options={{ headerTitle: 'QR Code' }}
+        options={{ headerTitle: "QR Code" }}
       />
     </QRCodeStack.Navigator>
   );
