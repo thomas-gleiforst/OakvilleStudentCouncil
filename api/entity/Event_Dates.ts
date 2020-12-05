@@ -9,6 +9,7 @@ export class Event_Dates {
   eventDate!: Date;
 
   @OneToOne(() => Events)
+  @PrimaryColumn()
   @JoinColumn()
-  eventID!: Events; //this is foreign key referencing Events table
+  eventID!: Events;
 }

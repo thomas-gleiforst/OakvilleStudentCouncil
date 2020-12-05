@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn, CreateDateColumn} from "typeorm"
+import { Column, Entity, PrimaryColumn, ManyToOne, CreateDateColumn} from "typeorm"
+import {Attends} from "./Attends"
 
 // TODO: Set column types of necessary (default in varchar255 or int)
 // TODO: Should loginDate() column be type @UpdateDateColumn?
@@ -6,7 +7,8 @@ import { Column, Entity, PrimaryColumn, CreateDateColumn} from "typeorm"
 export class Student {
 
   @PrimaryColumn("char", {length: 80})
-  email!: string;
+  @ManyToOne(() => Student, (student: any) => student.email)
+  email!: Attends;
 
   @Column("varchar", {length: 1024})
   stuPass!: string;
