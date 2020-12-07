@@ -23,6 +23,6 @@ export class Admin {
   @Column("timestamp")
   loginDate!: Date;
 
-  @CreateDateColumn("timestamp")
+  @CreateDateColumn()
   joinDate!: Date;
 }

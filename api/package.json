@@ -20,6 +20,6 @@
     "pg": "^8.5.1"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "nodemon src/index.ts"
   }
 }

@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryColumn, ManyToOne, OneToMany, JoinColumn, } from "typeorm"
-import {Events} from "./Events"
+import { Column, Entity, PrimaryColumn, ManyToOne } from "typeorm"
+import {Event} from "./Event"
 import {Student} from "./Student"
 
 // TODO: Set column types of necessary (default in varchar255 or int)
@@ -7,11 +7,11 @@ import {Student} from "./Student"
 @Entity()
 export class Attends {
 
-  @OneToMany(() => Student, (email: any) => email.email)
+  @ManyToOne(() => Student, (student: Student) => student.email)
   @PrimaryColumn()
-  email!: Student[];
+  email!: string;
 
-  @ManyToOne(() => Events, (eventID: any) => eventID.eventID)
+  @ManyToOne(() => Event, (event: Event) => event.eventID)
   @PrimaryColumn()
-  eventID!: Events;
+  eventID!: string;
 }

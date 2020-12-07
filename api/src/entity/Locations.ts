@@ -1,8 +1,7 @@
 import { Column, Entity, PrimaryColumn, OneToOne, JoinColumn } from "typeorm"
-import {Events} from "./Events"
+import {Event} from "./Event"
 
 // TODO: Set column types of necessary (default in varchar255 or int)
-// TODO: Determing if syntax for creating FK and PK out of same attribute is correct
 @Entity()
 export class Locations {
 
@@ -15,8 +14,8 @@ export class Locations {
   @Column("smallint")
   room!: Number;
 
-  @OneToOne(() => Events)
+  @OneToOne(() => Event)
   @PrimaryColumn()
   @JoinColumn()
-  eventID!: Events;
+  eventID!: string;
 }
