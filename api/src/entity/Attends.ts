@@ -12,7 +12,8 @@ export class Attends {
   //@PrimaryColumn()
   email!: Student
 
-  @ManyToOne(() => Event, (event: Event) => event.eventID)
-  @PrimaryColumn()
+  @ManyToOne(() => Event, (event: Event) => event.eventID, {
+    primary: true
+  })
   eventID!: string
 }

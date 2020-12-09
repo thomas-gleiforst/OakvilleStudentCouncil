@@ -20,9 +20,11 @@ CREATE USER ohsDev WITH PASSWORD 'admin';
 GRANT ALL PRIVILEGES ON DATABASE ohsDevDB TO ohsDev;
 ```
 
-3. Quit psql and setup the backend.
+3. Quit psql and log into the database as the new user to make sure it works.
 ```
 \q
+# Log into the ohsdb database as the ohsdev user
+psql -d ohsdb -U ohsdev
 ```
 
 ### Backend setup
