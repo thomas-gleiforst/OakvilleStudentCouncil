@@ -17,7 +17,7 @@ sudo psql -u postgres
 ```
 CREATE DATABASE ohsDB;
 CREATE USER ohsDev WITH PASSWORD 'admin';
-GRANT ALL PRIVILEGES ON DATABASE ohsDevDB TO ohsDev;
+GRANT ALL PRIVILEGES ON DATABASE ohsDB TO ohsDev;
 ```
 
 3. Quit psql and log into the database as the new user to make sure it works.

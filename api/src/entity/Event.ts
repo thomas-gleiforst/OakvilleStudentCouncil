@@ -1,10 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, } from 'typeorm'
 import { Attends } from './Attends'
 
 // TODO: Set column types of necessary (default in varchar255 or int)
 @Entity()
 export class Event {
-  @PrimaryColumn('smallint')
+  @PrimaryGeneratedColumn("uuid")
   eventID!: number
 
   @Column('char', { length: 80 })
