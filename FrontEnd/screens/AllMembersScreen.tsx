@@ -19,7 +19,7 @@ export default function AllMember() {
       />
       {members.map((member) => {
         return (
-          <View style={styles.memberBox}>
+          <View style={styles.memberBox} key={member.name}>
             <Text style={styles.memberDetails}>
               {member.name + " - " + member.email + " - " + member.points}
             </Text>

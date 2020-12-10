@@ -32,7 +32,7 @@ export default function QRCode() {
         <Text style={styles.subtitle}>Attendees ({meeting.attendees.length})</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
           {meeting.attendees.map((attendee) => {
-            return <Text style={styles.attendee}>{attendee.name}</Text>;
+            return <Text style={styles.attendee} key={attendee.name}>{attendee.name}</Text>;
           })}
         </ScrollView>
       </View>

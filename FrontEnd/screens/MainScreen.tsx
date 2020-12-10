@@ -34,7 +34,7 @@ export default function Main() {
       <Text style={styles.title}>Here are your next events.</Text>
       {events.map((event) => {
         return (
-          <Pressable>
+          <Pressable key={event.title}>
             <View style={styles.event}>
               <Text style={styles.eventTitle}>{event.title}</Text>
               <Text style={styles.eventDetails}>
