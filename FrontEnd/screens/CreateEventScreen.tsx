@@ -1,15 +1,45 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import * as React from "react";
+import { Pressable, StyleSheet, TextInput } from "react-native";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import EditScreenInfo from "../components/EditScreenInfo";
+import { Text, View } from "../components/Themed";
+
+function createEvent() {
+  return false
+}
 
 export default function CreateEventScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Create Event Screen</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/CreateEventScreen.js" />
+      <TextInput
+        style={styles.title}
+        placeholder="Event Name"
+        placeholderTextColor="#fff"
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Event Location"
+        textContentType="location"
+        placeholderTextColor="#fff"
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Event Room"
+        placeholderTextColor="#fff"
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Event Date(s)"
+        placeholderTextColor="#fff"
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Event Description"
+        placeholderTextColor="#fff"
+      />
+      <Pressable style={styles.button} onPress={createEvent}>
+        Create Event
+      </Pressable>
     </View>
   );
 }
@@ -17,16 +47,30 @@ export default function CreateEventScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
+    margin: 15,
     fontSize: 20,
-    fontWeight: 'bold',
+    borderBottomWidth: 2,
+    color: "#fff",
+    borderColor: "#fff",
+    fontFamily: "Arial",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  button: {
+    margin: 25,
+    marginTop: 100,
+    padding: 10,
+    borderRadius: 25,
+    fontSize: 24,
+    lineHeight: 48,
+    width: "45vw",
+    backgroundColor: "#fff",
+    color: "#FFB61D",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontFamily: "Arial",
+    boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
   },
 });

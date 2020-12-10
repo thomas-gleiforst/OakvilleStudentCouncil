@@ -1,32 +1,76 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import * as React from "react";
+import { StyleSheet } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import QR from "react-native-qrcode-svg";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+import EditScreenInfo from "../components/EditScreenInfo";
+import { Text, View } from "../components/Themed";
 
 export default function QRCode() {
+  let meeting = {
+    name: "General Meeting",
+    date: "1/7/20",
+    time: "5:00 pm",
+    attendees: [
+      { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
+      { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
+    ],
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>QR Code Screen</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/QRCodeScreen.js" />
+      <Text style={styles.title}>{meeting.name}</Text>
+      <View style={styles.QRcontainer}>
+        <QR
+          value={meeting.name + meeting.date + meeting.time}
+          backgroundColor="transparent"
+          size={window.innerWidth / 2}
+          logo={require("../assets/images/smallLogo.png")}
+          logoSize={100}
+        />
+      </View>
+      <View style={styles.attendees}>
+        <Text style={styles.subtitle}>Attendees ({meeting.attendees.length})</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {meeting.attendees.map((attendee) => {
+            return <Text style={styles.attendee}>{attendee.name}</Text>;
+          })}
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-around",
+    height: "100%",
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
+  },
+  QRcontainer: {
+    borderRadius: 20,
+    backgroundColor: "white",
+    padding: 25,
+  },
+  attendees: {
+    textAlign: "center",
+    height: "40%",
+  },
+  attendee: {
+    fontSize: 24,
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: "10px"
   },
 });

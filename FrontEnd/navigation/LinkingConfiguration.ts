@@ -1,54 +1,54 @@
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 export default {
-  prefixes: [Linking.makeUrl('/')],
+  prefixes: [Linking.makeUrl("/")],
   config: {
     screens: {
       Root: {
         screens: {
           AllMember: {
             screens: {
-              AllMemberScreen: 'one'
+              AllMemberScreen: "one",
             },
           },
           Calendar: {
             screens: {
-              CalendarScreen: 'two'
+              CalendarScreen: "two",
             },
           },
           CreateEvent: {
             screens: {
-              CreateEventScreen: 'three'
+              CreateEventScreen: "three",
             },
           },
           CreateUser: {
             screens: {
-              CreateUserScreen: 'four'
+              CreateUserScreen: "four",
             },
           },
           Home: {
             screens: {
-              HomeScreen: 'five',
+              HomeScreen: "five",
             },
           },
           Main: {
             screens: {
-              MainScreen: 'six',
+              MainScreen: "six",
             },
           },
           MeetingStat: {
             screens: {
-              MeetingStatScreen: 'seven'
+              MeetingStatScreen: "seven",
             },
           },
           QRCode: {
             screens: {
-              QRCodeScreen: 'eight'
-            }
-          }
+              QRCodeScreen: "eight",
+            },
+          },
         },
       },
-      NotFound: '*',
+      NotFound: "*",
     },
   },
 };
