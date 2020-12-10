@@ -37,8 +37,8 @@ export default function CreateEventScreen() {
         placeholder="Event Description"
         placeholderTextColor="#fff"
       />
-      <Pressable style={styles.button} onPress={createEvent}>
-        Create Event
+      <Pressable onPress={createEvent}>
+        <Text style={styles.button}>Create Event</Text>
       </Pressable>
     </View>
   );

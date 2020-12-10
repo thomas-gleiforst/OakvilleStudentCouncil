@@ -35,8 +35,8 @@ export default function MeetingStat() {
     <View style={styles.container}>
       <View>
         <Text style={styles.title}>{event.name}</Text>
-        <Pressable style={styles.button} onPress={changeEvent}>
-          Change Event
+        <Pressable onPress={changeEvent}>
+          <Text style={styles.button}>Change Event</Text>
         </Pressable>
       </View>
       <View style={styles.stats}>
@@ -54,10 +54,10 @@ export default function MeetingStat() {
       </View>
       <View style={styles.attendees}>
         <Text style={styles.subtitle}>
-          Attendance
+          <Text>Attendance</Text>
         </Text>
-        <Pressable style={styles.button} onPress={resort}>
-          Sort By: {sortBy}
+        <Pressable onPress={resort}>
+          <Text style={styles.button}>Sort By: {sortBy}</Text>
         </Pressable>
         <View style={styles.attendee}>
           <Text style={styles.header}>Attendees</Text>
@@ -66,7 +66,7 @@ export default function MeetingStat() {
         <ScrollView showsVerticalScrollIndicator={false}>
           {event.attendees.map((attendee) => {
             return (
-              <View style={styles.attendee}>
+              <View style={styles.attendee} key={attendee.name}>
                 <Text style={styles.stat}>{attendee.name}</Text>
                 <Text style={styles.stat}>{attendee.points}</Text>
               </View>

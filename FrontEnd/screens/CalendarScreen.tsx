@@ -12,38 +12,37 @@ export default function Calendar() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{month}</Text>
-      {
-        Array.from(Array(6).keys()).map(week => {
-          return (
-            <View style={styles.week}>
-              {
-                Array.from(Array(7).keys()).map(day => {
-                  return (
-                    <View style={styles.day}>
-                      {day+7*week+1-offset > 0 && day+7*week+1-offset <= lastDay ? day+7*week+1-offset : ""}
-                      {
-                        events.map(event => {
-                          if (parseInt(event.date.split("/")[1]) == day+7*week+1-offset) {
-                            return (
-                              <View style={styles.event}>
-                                {event.name}
-                              </View>
-                            )
-                          }
-                          else {
-                            return
-                          }
-                        })
-                      }
-                    </View>
-                  )})
-              }
-            </View>
-          )
-        })
-      }
+      {Array.from(Array(6).keys()).map((week) => {
+        return (
+          <View style={styles.week} key={week}>
+            {Array.from(Array(7).keys()).map((day) => {
+              return (
+                <View style={styles.day} key={day+7*week+1-offset}>
+                  <Text style={styles.dayText}>
+                    {day + 7 * week + 1 - offset > 0 && day + 7 * week + 1 - offset <= lastDay ? day + 7 * week + 1 - offset : ''}
+                  </Text>
+                  {events.map((event) => {
+                    if (
+                      parseInt(event.date.split('/')[1]) ==
+                      day + 7 * week + 1 - offset
+                    ) {
+                      return (
+                        <View style={styles.event} key={event.name}>
+                          <Text style={styles.eventText}>{event.name}</Text>
+                        </View>
+                      )
+                    } else {
+                      return
+                    }
+                  })}
+                </View>
+              )
+            })}
+          </View>
+        )
+      })}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({

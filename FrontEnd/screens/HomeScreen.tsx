@@ -29,10 +29,10 @@ export default function Home({ navigation }: any) {
           textContentType="password"
         />
         <Pressable style={styles.clickableText} onPress={() => createAccount(navigation)}>
-          Create Account
+          <Text style={styles.clickableText}>Create Account</Text>
         </Pressable>
-        <Pressable style={styles.button} onPress={() => logIn(navigation)}>
-          Log In
+        <Pressable onPress={() => logIn(navigation)}>
+          <Text style={styles.button}>Log In</Text>
         </Pressable>
       </View>
     </View>

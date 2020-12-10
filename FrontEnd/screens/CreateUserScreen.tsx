@@ -30,8 +30,8 @@ export default function CreateUser() {
         textContentType="password"
         placeholderTextColor="#fff"
       />
-      <Pressable style={styles.button} onPress={createAccount}>
-        Create Account
+      <Pressable onPress={createAccount}>
+        <Text style={styles.button}>Create Account</Text>
       </Pressable>
     </View>
   );
