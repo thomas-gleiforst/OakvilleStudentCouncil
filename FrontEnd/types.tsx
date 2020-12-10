@@ -45,3 +45,7 @@ export type MeetingStatParamList = {
 export type QRCodeParamList = {
   QRCodeScreen: undefined;
 }
+
+export type ScannerParamList = {
+  ScannerScreen: undefined;
+}

@@ -13,6 +13,7 @@ import HomeScreen from "../screens/HomeScreen";
 import MainScreen from "../screens/MainScreen";
 import MeetingStatScreen from "../screens/MeetingStatScreen";
 import QRCodeScreen from "../screens/QRCodeScreen";
+import ScannerScreen from "../screens/ScannerScreen"
 import {
   BottomTabParamList,
   AllMembersParamList,
@@ -23,6 +24,7 @@ import {
   MainParamList,
   MeetingStatParamList,
   QRCodeParamList,
+  ScannerParamList,
 } from "../types";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -101,6 +103,15 @@ export default function BottomTabNavigator() {
       <BottomTab.Screen
         name="QRCode"
         component={QRCodeNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Scanner"
+        component={ScannerNavigator}
         options={{
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="ios-code" color={color} />
@@ -228,5 +239,19 @@ function QRCodeNavigator() {
         options={{ headerTitle: "QR Code" }}
       />
     </QRCodeStack.Navigator>
+  );
+}
+
+const ScannerStack = createStackNavigator<ScannerParamList>();
+
+function ScannerNavigator() {
+  return (
+    <ScannerStack.Navigator>
+      <ScannerStack.Screen
+        name="ScannerScreen"
+        component={ScannerScreen}
+        options={{ headerTitle: "Scanner" }}
+      />
+    </ScannerStack.Navigator>
   );
 }
