@@ -21,11 +21,13 @@ export default function Home({ navigation }: any) {
         <TextInput
           style={styles.title}
           placeholder="School Email"
+          placeholderTextColor="#fff"
           textContentType="emailAddress"
         />
         <TextInput
           style={styles.title}
           placeholder="Password"
+          placeholderTextColor="#fff"
           textContentType="password"
         />
         <Pressable style={styles.clickableText} onPress={() => createAccount(navigation)}>
@@ -51,7 +53,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     borderBottomWidth: 2,
     borderColor: "#fff",
-    placeholderTextColor: "#fff",
     margin: 15,
   },
   button: {
