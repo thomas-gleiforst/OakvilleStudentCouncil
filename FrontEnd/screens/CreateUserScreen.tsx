@@ -16,16 +16,19 @@ export default function CreateUser() {
         style={styles.title}
         placeholder="School Email"
         textContentType="emailAddress"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Password"
         textContentType="password"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Confirm Password"
         textContentType="password"
+        placeholderTextColor="#fff"
       />
       <Pressable style={styles.button} onPress={createAccount}>
         Create Account
@@ -45,7 +48,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     borderBottomWidth: 2,
     borderColor: "#fff",
-    placeholderTextColor: "#fff",
     margin: 15,
     fontFamily: "Arial",
   },

@@ -6,21 +6,26 @@ import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
 export default function AllMember() {
-  var members = [{name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6}, {name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24}]
+  var members = [
+    { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
+    { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
+  ];
   return (
     <View style={styles.container}>
-      <TextInput style={styles.detailSearch} placeholder="Enter Name, Email, or Point Value" />
-      {
-        members.map(member => {
-          return (
-            <View style={styles.memberBox}>
-              <Text style={styles.memberDetails}>
-                {member.name + " - " + member.email + " - " + member.points}
-              </Text>
-            </View>
-          )
-        })
-      }
+      <TextInput
+        style={styles.detailSearch}
+        placeholder="Enter Name, Email, or Point Value"
+        placeholderTextColor="#FFB61D"
+      />
+      {members.map((member) => {
+        return (
+          <View style={styles.memberBox}>
+            <Text style={styles.memberDetails}>
+              {member.name + " - " + member.email + " - " + member.points}
+            </Text>
+          </View>
+        );
+      })}
     </View>
   );
 }
@@ -61,6 +66,5 @@ const styles = StyleSheet.create({
     color: "#FFB61D",
     fontSize: 20,
     textAlign: "center",
-    placeholderTextColor: "#FFB61D",
   },
 });

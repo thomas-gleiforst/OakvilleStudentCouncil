@@ -14,23 +14,28 @@ export default function CreateEventScreen() {
       <TextInput
         style={styles.title}
         placeholder="Event Name"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Event Location"
         textContentType="location"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Event Room"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Event Date(s)"
+        placeholderTextColor="#fff"
       />
       <TextInput
         style={styles.title}
         placeholder="Event Description"
+        placeholderTextColor="#fff"
       />
       <Pressable style={styles.button} onPress={createEvent}>
         Create Event
@@ -51,7 +56,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     color: "#fff",
     borderColor: "#fff",
-    placeholderTextColor: "#fff",
     fontFamily: "Arial",
   },
   button: {
