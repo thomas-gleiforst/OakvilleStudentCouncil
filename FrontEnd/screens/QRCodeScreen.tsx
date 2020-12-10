@@ -23,7 +23,7 @@ export default function QRCode() {
         <QR
           value={meeting.name + meeting.date + meeting.time}
           backgroundColor="transparent"
-          size={window.innerWidth / 2}
+          size={200}
           logo={require("../assets/images/smallLogo.png")}
           logoSize={100}
         />

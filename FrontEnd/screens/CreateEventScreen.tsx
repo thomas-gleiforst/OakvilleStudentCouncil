@@ -64,11 +64,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     fontSize: 24,
     lineHeight: 48,
-    width: "45vw",
+    //width: Math.round(window.innerWidth*.45),
     backgroundColor: "#fff",
     color: "#FFB61D",
     textAlign: "center",
     fontWeight: "bold",
-    boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+    // boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
   },
 });
