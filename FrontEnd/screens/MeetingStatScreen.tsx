@@ -1,36 +1,138 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Pressable, ScrollView, StyleSheet } from "react-native";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
+function changeEvent() {
+  return false;
+}
+
+function resort() {
+  return false;
+}
+
 export default function MeetingStat() {
+  let events = [
+    { name: "General Meeting", date: "1/7/20", time: "5:00 pm" },
+    { name: "OMS Service Hrs", date: "1/12/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/14/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/21/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/28/20", time: "5:00 pm" },
+  ];
+  let event = {
+    name: "General Meeting",
+    date: "1/7/20",
+    time: "5:00 pm",
+    totalPoints: "30",
+    attendees: [
+      { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
+      { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
+    ],
+  };
+  let sortOptions = Object.keys(event.attendees[0])
+  let sortBy = sortOptions[0]
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Meeting Stat Screen</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="/screens/MeetingStatScreen.js" />
+      <View>
+        <Text style={styles.title}>{event.name}</Text>
+        <Pressable style={styles.button} onPress={changeEvent}>
+          Change Event
+        </Pressable>
+      </View>
+      <View style={styles.stats}>
+        <Text style={styles.subtitle}>Stats</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.attendee}>
+            <Text style={styles.stat}>Total Attended</Text>
+            <Text style={styles.stat}>{event.attendees.length}</Text>
+          </View>
+          <View style={styles.attendee}>
+            <Text style={styles.stat}>Total Points</Text>
+            <Text style={styles.stat}>{event.totalPoints}</Text>
+          </View>
+        </ScrollView>
+      </View>
+      <View style={styles.attendees}>
+        <Text style={styles.subtitle}>
+          Attendance
+        </Text>
+        <Pressable style={styles.button} onPress={resort}>
+          Sort By: {sortBy}
+        </Pressable>
+        <View style={styles.attendee}>
+          <Text style={styles.header}>Attendees</Text>
+          <Text style={styles.header}>Points</Text>
+        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {event.attendees.map((attendee) => {
+            return (
+              <View style={styles.attendee}>
+                <Text style={styles.stat}>{attendee.name}</Text>
+                <Text style={styles.stat}>{attendee.points}</Text>
+              </View>
+            );
+          })}
+        </ScrollView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
+    height: "100%",
   },
   title: {
-    fontSize: 20,
+    fontSize: 36,
     fontWeight: "bold",
+    marginBottom: "10px",
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: "80%",
+  },
+  stats: {
+    textAlign: "center",
+    height: "20%",
+    width: "50%",
+  },
+  attendees: {
+    textAlign: "center",
+    height: "40%",
+    width: "50%",
+  },
+  attendee: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: "10px",
+  },
+  button: {
+    marginBottom: 25,
+    padding: 10,
+    borderRadius: 10,
+    fontSize: 18,
+    lineHeight: 24,
+    width: "30vw",
+    backgroundColor: "#fff",
+    color: "#FFB61D",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontFamily: "Arial",
+    boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+    alignSelf: "center",
+  },
+  stat: {
+    fontSize: 20,
+  },
+  header: {
+    fontSize: 16,
   },
 });
