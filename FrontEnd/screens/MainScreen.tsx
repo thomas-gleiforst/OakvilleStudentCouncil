@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Pressable, StyleSheet } from "react-native";
+import * as React from "react"
+import { Pressable, StyleSheet } from "react-native"
 
-import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
+import EditScreenInfo from "../components/EditScreenInfo"
+import { Text, View } from "../components/Themed"
 
 export default function Main() {
   var username: string = "Thomas";
@@ -19,9 +19,10 @@ export default function Main() {
       room: "205",
       location: "Oakville High School",
     },
-  ];
-  var points = 6;
-  var pointGoal = 100;
+  ]
+  var points = 6
+  var pointGoal = 100
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome {username}.</Text>
@@ -44,11 +45,11 @@ export default function Main() {
               <Text style={styles.eventDetails}>{event.location}</Text>
             </View>
           </Pressable>
-        );
+        )
       })}
       <Text style={styles.link}>Open Calendar</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -85,5 +86,12 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: "underline",
-  }
-});
+  },
+  scanner: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: "100%",
+    height: "100%",
+  },
+})

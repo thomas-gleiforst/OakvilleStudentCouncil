@@ -1,14 +1,20 @@
-import * as React from "react";
-import { StyleSheet } from "react-native";
+import * as React from "react"
+import { StyleSheet } from "react-native"
 
-import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
+import EditScreenInfo from "../components/EditScreenInfo"
+import { Text, View } from "../components/Themed"
 
 export default function Calendar() {
   let month: string = "January"
   let offset: number = 5
   let lastDay: number = 31
-  let events = [{name: "General Meeting", date: "1/7/20", time: "5:00 pm"}, {name: "OMS Service Hrs", date: "1/12/20", time: "5:00 pm"}, {name: "General Meeting", date: "1/14/20", time: "5:00 pm"}, {name: "General Meeting", date: "1/21/20", time: "5:00 pm"}, {name: "General Meeting", date: "1/28/20", time: "5:00 pm"}]
+  let events = [
+    { name: "General Meeting", date: "1/7/20", time: "5:00 pm" },
+    { name: "OMS Service Hrs", date: "1/12/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/14/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/21/20", time: "5:00 pm" },
+    { name: "General Meeting", date: "1/28/20", time: "5:00 pm" },
+  ]
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{month}</Text>
@@ -17,13 +23,13 @@ export default function Calendar() {
           <View style={styles.week} key={week}>
             {Array.from(Array(7).keys()).map((day) => {
               return (
-                <View style={styles.day} key={day+7*week+1-offset}>
+                <View style={styles.day} key={day + 7 * week + 1 - offset}>
                   <Text style={styles.dayText}>
-                    {day + 7 * week + 1 - offset > 0 && day + 7 * week + 1 - offset <= lastDay ? day + 7 * week + 1 - offset : ''}
+                    {day + 7 * week + 1 - offset > 0 && day + 7 * week + 1 - offset <= lastDay ? day + 7 * week + 1 - offset : ""}
                   </Text>
                   {events.map((event) => {
                     if (
-                      parseInt(event.date.split('/')[1]) ==
+                      parseInt(event.date.split("/")[1]) ==
                       day + 7 * week + 1 - offset
                     ) {
                       return (
@@ -88,5 +94,14 @@ const styles = StyleSheet.create({
     fontSize: 10,
     backgroundColor: "#FFB61D",
     color: "white",
-  }
-});
+  },
+  dayText: {
+    fontSize: 16,
+    color: "#FFB61D",
+    textAlign: "center",
+  },
+  eventText: {
+    fontSize: 10,
+    color: "white",
+  },
+})
