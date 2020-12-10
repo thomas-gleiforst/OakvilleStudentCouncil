@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontWeight: "bold",
-    marginBottom: "10px",
+    marginBottom: 10,
   },
   separator: {
     marginVertical: 30,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: "10px",
+    marginBottom: 10,
   },
   button: {
     marginBottom: 25,

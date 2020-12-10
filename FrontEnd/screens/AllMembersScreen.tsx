@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
   },
   memberDetails: {
     color: "#FFB61D",
-    marginLeft: "5px",
-    marginRight: "5px",
-    marginBottom: "2.5px",
+    marginLeft: 5,
+    marginRight: 5,
+    marginBottom: 3,
     textAlign: "center",
   },
   detailSearch: {

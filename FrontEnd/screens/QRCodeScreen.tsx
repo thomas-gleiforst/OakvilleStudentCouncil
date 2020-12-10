@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: "10px"
+    marginBottom: 10,
   },
 });

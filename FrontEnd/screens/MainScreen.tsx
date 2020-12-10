@@ -73,15 +73,15 @@ const styles = StyleSheet.create({
   },
   eventDetails: {
     color: "#FFB61D",
-    marginLeft: "5px",
-    marginRight: "5px",
-    marginBottom: "2.5px",
+    marginLeft: 5,
+    marginRight: 5,
+    marginBottom: 3,
   },
   eventTitle: {
     color: "#FFB61D",
     fontSize: 20,
     fontWeight: "bold",
-    margin: "5px",
+    margin: 5,
   },
   link: {
     textDecorationLine: "underline",
