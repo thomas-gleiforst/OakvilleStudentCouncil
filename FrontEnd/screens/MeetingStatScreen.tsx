@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
     color: "#FFB61D",
     textAlign: "center",
     fontWeight: "bold",
-    fontFamily: "Arial",
     boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
     alignSelf: "center",
   },

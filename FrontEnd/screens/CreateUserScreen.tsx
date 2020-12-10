@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: "#fff",
     margin: 15,
-    fontFamily: "Arial",
   },
   button: {
     color: "#FFB61D",
@@ -62,7 +61,6 @@ const styles = StyleSheet.create({
     lineHeight: 48,
     textAlign: "center",
     fontWeight: "bold",
-    fontFamily: "Arial",
     boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
   },
 });

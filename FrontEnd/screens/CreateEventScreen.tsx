@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     color: "#fff",
     borderColor: "#fff",
-    fontFamily: "Arial",
   },
   button: {
     margin: 25,
@@ -70,7 +69,6 @@ const styles = StyleSheet.create({
     color: "#FFB61D",
     textAlign: "center",
     fontWeight: "bold",
-    fontFamily: "Arial",
     boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
   },
 });
