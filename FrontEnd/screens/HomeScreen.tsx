@@ -1,36 +1,84 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Pressable, StyleSheet, TextInput, Image } from "react-native";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
-export default function Home() {
+function createAccount( navigation: any) {
+  console.log(navigation)
+  return navigation.navigate("CreateUser")
+}
+
+function logIn(navigation: any) {
+  // if authenticated
+  return navigation.navigate("Main")
+}
+
+export default function Home({ navigation }: any) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home Screen</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="/screens/HomeScreen.js" />
+      <Image style={styles.logo} source={require("../assets/images/OHS-Logo.png")} />
+      <View>
+        <TextInput
+          style={styles.title}
+          placeholder="School Email"
+          textContentType="emailAddress"
+        />
+        <TextInput
+          style={styles.title}
+          placeholder="Password"
+          textContentType="password"
+        />
+        <Pressable style={styles.clickableText} onPress={() => createAccount(navigation)}>
+          Create Account
+        </Pressable>
+        <Pressable style={styles.button} onPress={() => logIn(navigation)}>
+          Log In
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
+    height: "100%",
   },
   title: {
     fontSize: 20,
+    color: "#fff",
+    borderBottomWidth: 2,
+    borderColor: "#fff",
+    placeholderTextColor: "#fff",
+    margin: 15,
+    fontFamily: "Arial",
+  },
+  button: {
+    color: "#FFB61D",
+    backgroundColor: "#fff",
+    margin: 25,
+    padding: 10,
+    borderRadius: 25,
+    fontSize: 24,
+    width: "45vw",
+    lineHeight: 48,
+    textAlign: "center",
     fontWeight: "bold",
+    fontFamily: "Arial",
+    boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  clickableText: {
+    color: "#fff",
+    margin: 5,
+    fontSize: 18,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontFamily: "Arial",
   },
+  logo: {
+    width: "90%",
+    height: "25%",
+  }
 });
