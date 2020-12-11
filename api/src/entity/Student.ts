@@ -11,19 +11,19 @@ import {
 // TODO: Should loginDate() column be type @UpdateDateColumn?
 @Entity()
 export class Student {
-  @PrimaryColumn('char', { length: 80 })
+  @PrimaryColumn('varchar', { length: 80 })
   email!: string
 
   @Column('varchar', { length: 1024 })
   stuPass!: string
 
-  @Column('char', { length: 80 })
+  @Column('varchar', { length: 80 })
   firstName!: string
 
-  @Column('char', { length: 80 })
+  @Column('varchar', { length: 80 })
   middleName!: string
 
-  @Column('char', { length: 80 })
+  @Column('varchar', { length: 80 })
   lastName!: string
 
   @Column('timestamp')

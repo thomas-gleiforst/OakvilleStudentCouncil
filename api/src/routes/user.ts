@@ -8,81 +8,141 @@ import { request } from 'http'
 
 const router = Router()
 
-// FIXME: This might be a DB issue, but all of our strings for
-// student are the same length, so when we run this query, there's
-// a ton of whitespice in there. This might require a schema change
-// or something else
-//QUESTION: Is this the query that returns all student stats
-router.get('/users', async (req: Request, res: Response) => {
+/**
+ * Returns the students table with all attributes
+ */
+router.get('/allStudents', async (req: Request, res: Response) => {
   const users = await getConnection().getRepository(Student).find()
-  return res.send({users})
+  return res.send({ users })
 })
 
-router.get('/user/:id', (req, res) => {
-  return res.send(`This is the example route with an id: ${req.params.id}`)
+/**
+ * Returns the admin table with all attributes
+ */
+router.get('/allAdmins', async (req: Request, res: Response) => {
+  const admins = await getConnection().getRepository(Admin).find()
+  return res.send({ admins })
 })
 
-//TODO: How to get user input for searchemail?
-//TODO: How to return the given results
-//  -change .get to .post and then use request.____ as the variable name you are trying to enters
-router.get('/user/:points', async(req: Request, res: Response) => {
+/**
+ * Returns a student object with all values
+ * Requires these values in the request
+ * email
+ */
+router.post('/student', async (req, res) => {
   const request = req.body
+
+  const student = await getConnection()
+    .createQueryBuilder()
+    .select('student')
+    .from(Student, 'student')
+    .where('student.email = :email', { email: request.email })
+    .getOne()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  return res.send(student)
+})
+
+/**
+ * Returns a admin object with all values
+ * Requires these values in the request
+ * email
+ */
+router.post('/admin', async (req, res) => {
+  const request = req.body
+
+  const admin = await getConnection()
+    .createQueryBuilder()
+    .select('admin')
+    .from(Admin, 'admin')
+    .where('student.email = :email', { email: request.email })
+    .getOne()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  return res.send(admin)
+})
+
+/**
+ * Returns the points that a student has
+ * Requires these values in the request
+ * email
+ */
+router.post('/student/points', async (req: Request, res: Response) => {
+  const request = req.body
+
   const points = await getConnection()
-  .createQueryBuilder()
-  //.values({
-  //  searchemail: request.searchemail,
-  //})
-  .select("points")
-  .from(Student, "student")
-  .where("user.email IN (:...searchemail)", {searchemail: "bdefm5@mst.edu"})
-  .getMany()
-  .catch((error: "EntityNotFoundError") => {
-    return res.send("Email does not exist.")
-  })
-  .catch((error) => {
-    console.log(error)
-    return res.send(error)
-  });
+    .createQueryBuilder()
+    .select('points')
+    .from(Student, 'student')
+    .where('student.email = :email', { email: request.email })
+    .getRawOne()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  return res.send(points)
+})
+
+/**
+ * Requires these values in the request
+ * email
+ */
+
+// TODO: test
+// Returns the event IDs for all the events that a user has attended
+// See if we can just return all event attributes instead
+router.post('/user/events', async (req: Request, res: Response) => {
+  const request = req.body
+  const eventIds = await getConnection()
+    .createQueryBuilder()
+    .select('eventID')
+    .from(Attends, 'attends')
+    .where('user.email IN (:...searchemail)', { searchemail: request.email })
+    .getMany()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
 
   return res.send('Point values returned.')
 })
 
-//TODO: How to get user input for searchemail?
-//TODO: Convert returned results from eventIDs to event names or some other parameter
-// let __varname__ = ... (continue with sql query to set variable name)
-router.get('/user/:events', async(req: Request, res: Response) => {
-  const request = req.body
-  const points = await getConnection()
-  .createQueryBuilder()
-  .select("eventID")
-  .from(Attends, "attends")
-  .where("user.email IN (:...searchemail)", {searchemail: "bdefm5@mst.edu"})
-  .getMany()
-  .catch((error: "EntityNotFoundError") => {
-    return res.send("Email does not exist.")
-  })
-  .catch((error) => {
-    console.log(error)
-    return res.send(error)
-  });
+/**
+ * Requires these values in the request
+ * email
+ * pointUpdate
+ */
 
-  return res.send('Point values returned.')
-})
-
-
-//TODO: How to pass in user points to update
-//TODO: How to pass in user email
+// TODO: test
+// TODO implement
 router.post('/updatePoints', async (req, res) => {
   const request = req.body
+
+  let currentPoints = await getConnection()
+    .createQueryBuilder()
+    .select('points')
+    .from(Student, 'student')
+    .where('email = :email', { email: request.email })
+    .getRawOne()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
 
   await getConnection()
     .createQueryBuilder()
     .update(Student)
-    .set({points: 10})
-    .where("email = :email", {email: "bdefm5@mst.edu"})
+    .set({ points: currentPoints + request.pointUpdate })
+    .where('email = :email', { email: request.email })
     .execute()
     .catch((error) => {
-      // If there is an error
       console.log(error)
       return res.send(error)
     })
@@ -91,11 +151,63 @@ router.post('/updatePoints', async (req, res) => {
   return res.send('Update request sent!')
 })
 
-// TODO: Salt and hash user password
-router.post('/stuUser', async (req, res) => {
+/**
+ * Requires these values in the request
+ * email
+ */
+
+// TODO: test
+// TODO implement
+router.post('/resetPoints', async (req, res) => {
   const request = req.body
 
   await getConnection()
+    .createQueryBuilder()
+    .update(Student)
+    .set({ points: 0 })
+    .where('email = :email', { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send('Update request sent!')
+})
+
+// TODO: test
+// TODO implement
+router.post('/resetAllPoints', async (req, res) => {
+  const request = req.body
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Student)
+    .set({ points: 0 })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send('Update request sent!')
+})
+
+/**
+ * Requires these values in the request
+ * email
+ * stuPass - password
+ * firstName
+ * middlename
+ * lastName
+ */
+router.post('/newStudent', async (req, res) => {
+  const request = req.body
+
+  // TODO: Salt and hash user password
+  const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Student)
@@ -116,14 +228,23 @@ router.post('/stuUser', async (req, res) => {
     })
 
   // Successful return
-  return res.send('Post request sent!')
+  return res.send(result)
 })
 
-// TODO: Salt and hash user password
-router.post('/adminUser', async (req, res) => {
+/**
+ * Requires these values in the request
+ * email
+ * stuPass - password
+ * firstName
+ * middlename
+ * lastName
+ */
+
+router.post('/newAdmin', async (req, res) => {
   const request = req.body
 
-  await getConnection()
+  // TODO: Salt and hash user passwordd
+  const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Admin)
@@ -137,13 +258,59 @@ router.post('/adminUser', async (req, res) => {
     })
     .execute()
     .catch((error) => {
-      // If there is an error
       console.log(error)
       return res.send(error)
     })
 
   // Successful return
-  return res.send('Post request sent!')
+  return res.send(result)
+})
+
+router.post('/delStudent', async (req, res) => {
+  const request = req.body
+
+  const result = await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Attends)
+    .where('email = :email', { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Student)
+    .where('email = :email', { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
+})
+
+router.post('/delAdmin', async (req, res) => {
+  const request = req.body
+
+  const result = await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Admin)
+    .where('email = :email', { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
 })
 
 export default router
