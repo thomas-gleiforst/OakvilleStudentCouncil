@@ -24,6 +24,7 @@ router.get('/user/:id', (req, res) => {
 
 //TODO: How to get user input for searchemail?
 //TODO: How to return the given results
+//  -change .get to .post and then use request.____ as the variable name you are trying to enters
 router.get('/user/:points', async(req: Request, res: Response) => {
   const request = req.body
   const points = await getConnection()
@@ -48,6 +49,7 @@ router.get('/user/:points', async(req: Request, res: Response) => {
 
 //TODO: How to get user input for searchemail?
 //TODO: Convert returned results from eventIDs to event names or some other parameter
+// let __varname__ = ... (continue with sql query to set variable name)
 router.get('/user/:events', async(req: Request, res: Response) => {
   const request = req.body
   const points = await getConnection()
