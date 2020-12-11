@@ -1,8 +1,7 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
 export default function AllMember() {
@@ -49,7 +48,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 15,
     margin: 5,
-    width: "75%",
+    ...Platform.select({
+      web: {
+        width: 400,
+      },
+      default: {
+        width: "90%"
+      }
+    })
   },
   memberDetails: {
     color: "#FFB61D",
@@ -62,9 +68,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 15,
     margin: 20,
-    width: "75%",
     color: "#FFB61D",
     fontSize: 20,
     textAlign: "center",
+    ...Platform.select({
+      web: {
+        width: 400,
+      },
+      default: {
+        width: "90%"
+      }
+    })
   },
 });

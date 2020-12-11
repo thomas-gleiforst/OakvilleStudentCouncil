@@ -1,21 +1,22 @@
 import * as React from "react"
-import { Pressable, StyleSheet } from "react-native"
+import { Dimensions, Platform, Pressable, StyleSheet } from "react-native"
 
 import EditScreenInfo from "../components/EditScreenInfo"
 import { Text, View } from "../components/Themed"
+import Navigation from "../navigation"
 
-export default function Main() {
-  var username: string = "Thomas";
+export default function Main({ navigation }: any) {
+  var username: string = "Thomas"
   var events = [
     {
       title: "General Meeting 1",
-      date: Date.now(),
+      date: new Date().toLocaleString(),
       room: "204",
       location: "Oakville High School",
     },
     {
       title: "Volunteer at OMS",
-      date: Date.now() + 5000,
+      date: new Date(5000).toLocaleString(),
       room: "205",
       location: "Oakville High School",
     },
@@ -39,7 +40,7 @@ export default function Main() {
             <View style={styles.event}>
               <Text style={styles.eventTitle}>{event.title}</Text>
               <Text style={styles.eventDetails}>
-                {event.date.toLocaleString()}
+                Time: {event.date}
               </Text>
               <Text style={styles.eventDetails}>Room: {event.room}</Text>
               <Text style={styles.eventDetails}>{event.location}</Text>
@@ -47,7 +48,9 @@ export default function Main() {
           </Pressable>
         )
       })}
-      <Text style={styles.link}>Open Calendar</Text>
+      <Pressable onPress={() => navigation.navigate("Calendar")}>
+        <Text style={styles.link}>Open Calendar</Text>
+      </Pressable>
     </View>
   )
 }
@@ -71,18 +74,28 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 15,
     margin: 10,
+    ...Platform.select({
+      web: {
+        width: Dimensions.get("window").width * 0.45,
+      },
+      default: {
+        width: Dimensions.get("window").width * 0.6,
+      },
+    }),
   },
   eventDetails: {
     color: "#FFB61D",
     marginLeft: 5,
     marginRight: 5,
     marginBottom: 3,
+    textAlign: "center",
   },
   eventTitle: {
     color: "#FFB61D",
     fontSize: 20,
     fontWeight: "bold",
     margin: 5,
+    textAlign: "center",
   },
   link: {
     textDecorationLine: "underline",

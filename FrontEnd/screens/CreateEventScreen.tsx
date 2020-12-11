@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Pressable, StyleSheet, TextInput } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, TextInput } from "react-native";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
 function createEvent() {
@@ -56,6 +55,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     color: "#fff",
     borderColor: "#fff",
+    ...Platform.select({
+      web: {
+        width: Dimensions.get("window").width*.45,
+      },
+      default: {
+        width: Dimensions.get("window").width*.60,
+      }
+    })
   },
   button: {
     margin: 25,
@@ -64,11 +71,27 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     fontSize: 24,
     lineHeight: 48,
-    //width: Math.round(window.innerWidth*.45),
     backgroundColor: "#fff",
     color: "#FFB61D",
     textAlign: "center",
     fontWeight: "bold",
-    // boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+    ...Platform.select({
+      web: {
+        width: Dimensions.get("window").width*.45,
+        boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+      },
+      default: {
+        width: Dimensions.get("window").width*.60,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 1,
+          height: 5,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 2.5,
+        elevation: 5,
+      },
+    })
+
   },
 });

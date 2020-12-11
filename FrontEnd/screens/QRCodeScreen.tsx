@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import QR from "react-native-qrcode-svg";
 
@@ -23,9 +23,9 @@ export default function QRCode() {
         <QR
           value={meeting.name + meeting.date + meeting.time}
           backgroundColor="transparent"
-          size={200}
+          size={Dimensions.get("window").width*.6}
           logo={require("../assets/images/smallLogo.png")}
-          logoSize={100}
+          logoSize={Dimensions.get("window").width*.2}
         />
       </View>
       <View style={styles.attendees}>
@@ -62,15 +62,16 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   attendees: {
-    textAlign: "center",
     height: "40%",
   },
   attendee: {
     fontSize: 24,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "center",
   },
 });

@@ -1,7 +1,5 @@
 import * as React from "react"
-import { StyleSheet } from "react-native"
-
-import EditScreenInfo from "../components/EditScreenInfo"
+import { Platform, StyleSheet } from "react-native"
 import { Text, View } from "../components/Themed"
 
 export default function Calendar() {
@@ -73,9 +71,7 @@ const styles = StyleSheet.create({
     margin: 5,
     width: "10%",
     height: "100%",
-    fontSize: 16,
     color: "#FFB61D",
-    textAlign: "center",
     flexDirection: "column",
     alignItems: "center",
   },
@@ -91,7 +87,6 @@ const styles = StyleSheet.create({
     width: "90%",
     borderRadius: 5,
     marginTop: 5,
-    fontSize: 10,
     backgroundColor: "#FFB61D",
     color: "white",
   },
@@ -101,7 +96,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   eventText: {
-    fontSize: 10,
+    textAlign: "center",
     color: "white",
+    ...Platform.select({
+      web: {
+        fontSize: 12,
+      },
+      default: {
+        fontSize: 8,
+      }
+    })
   },
 })

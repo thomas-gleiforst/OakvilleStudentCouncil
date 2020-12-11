@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Pressable, StyleSheet, TextInput, Image } from "react-native";
+import { Pressable, StyleSheet, TextInput, Image, Platform, Dimensions } from "react-native";
 
 import { Text, View } from "../components/Themed";
 
@@ -54,6 +54,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: "#fff",
     margin: 15,
+    ...Platform.select({
+      web: {
+        width: Dimensions.get("window").width*.45,
+      },
+      default: {
+        width: Dimensions.get("window").width*.60,
+      }
+    })
   },
   button: {
     color: "#FFB61D",
@@ -62,11 +70,26 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 25,
     fontSize: 24,
-    //width: Math.round(window.innerWidth*.45),
     lineHeight: 48,
     textAlign: "center",
     fontWeight: "bold",
-    // boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+    ...Platform.select({
+      web: {
+        width: Dimensions.get("window").width*.45,
+        boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
+      },
+      default: {
+        width: Dimensions.get("window").width*.60,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 1,
+          height: 5,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 2.5,
+        elevation: 5,
+      },
+    })
   },
   clickableText: {
     color: "#fff",
