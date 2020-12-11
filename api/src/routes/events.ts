@@ -3,6 +3,7 @@ import { getConnection } from 'typeorm'
 
 import { Event } from '../entity/Event'
 import { Attends } from '../entity/Attends'
+import { EventDate } from '../entity/EventDate'
 
 const router = Router()
 
@@ -14,7 +15,7 @@ const router = Router()
  */
 
 //Creates events
-router.post('/event', async (req, res) => {
+router.post('/createEvent', async (req, res) => {
   const request = req.body
   //creates event in Events Table
   let newEvent = await getConnection()
@@ -33,30 +34,28 @@ router.post('/event', async (req, res) => {
       return res.send(error)
     })
 
-    //retireves automatically generated eventID for the created event
-    await getConnection()
+    //retrieves eventID from newly inserted event
+    let insertedID = await getConnection()
     .createQueryBuilder()
-    .insert()
-    .into(Event)
-    .values({
-      eventName: request.eventName,
-      event_desc: request.event_desc,
-    })
+    .select("eventID")
+    .from(Event, "event")
+    //Attempting to search through the events table to find one where the insert identifier matches the new one
+    .where("InsertResult.identifiers = newEvent.identifiers")
     .execute()
     .catch((error) => {
       // If there is an error
       console.log(error)
       return res.send(error)
-    })
+    });
 
     //Sets date and eventID into Event_Dates table
     await getConnection()
     .createQueryBuilder()
     .insert()
-    .into(Event)
+    .into(EventDate)
     .values({
-      eventName: request.eventName,
-      event_desc: request.event_desc,
+      eventID: insertedID,
+      eventDate: request.eventDate,
     })
     .execute()
     .catch((error) => {
