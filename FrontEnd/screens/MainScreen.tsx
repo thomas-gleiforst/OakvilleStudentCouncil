@@ -1,11 +1,12 @@
 import * as React from "react"
 import { Dimensions, Platform, Pressable, StyleSheet } from "react-native"
-
-import EditScreenInfo from "../components/EditScreenInfo"
 import { Text, View } from "../components/Themed"
-import Navigation from "../navigation"
 
 export default function Main({ navigation }: any) {
+  const scanQR = (navigation: any) => {
+    navigation.navigate("Scanner")
+  }
+
   var username: string = "Thomas"
   var events = [
     {
@@ -28,7 +29,7 @@ export default function Main({ navigation }: any) {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome {username}.</Text>
       <Text style={styles.title}>What would you like to do?</Text>
-      <Pressable>
+      <Pressable onPress={() => scanQR(navigation)}>
         <View style={styles.event}>
           <Text style={styles.eventTitle}>Scan QR code</Text>
         </View>

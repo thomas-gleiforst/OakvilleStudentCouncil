@@ -46,6 +46,11 @@ export default {
               QRCodeScreen: "eight",
             },
           },
+          Scanner: {
+            screens: {
+              ScannerScreen: "nine",
+            },
+          },
         },
       },
       NotFound: "*",
