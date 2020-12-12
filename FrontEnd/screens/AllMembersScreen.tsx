@@ -1,16 +1,38 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Platform, StyleSheet } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 
 import { Text, View } from "../components/Themed"
 
 export default function AllMember() {
-  const [name, setName] = useState("")
+  const [filter, setFilter] = useState("")
+  const [members, setMembers] = useState([
+    {
+      email: "",
+      stuPass: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      loginDate: new Date(),
+      joinDate: new Date(),
+      points: 0,
+    },
+  ])
 
-  var members = [
-    { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
-    { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
-  ]
+  useEffect(() => {
+    const fetchData = async () =>
+      fetch("/allStudent", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setMembers(json.users)
+        })
+
+    fetchData()
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -18,14 +40,18 @@ export default function AllMember() {
         style={styles.detailSearch}
         placeholder="Enter Name, Email, or Point Value"
         placeholderTextColor="#FFB61D"
-        value={name}
-        onChangeText={(text) => setName(text)}
+        value={filter}
+        onChangeText={(text) => setFilter(text)}
       />
       {members.map((member) => {
         return (
-          <View style={styles.memberBox} key={member.name}>
+          <View
+            style={styles.memberBox}
+            key={member.firstName + member.lastName}
+          >
             <Text style={styles.memberDetails}>
-              {member.name + " - " + member.email + " - " + member.points}
+              {member.firstName} {member.lastName}
+              {`${member.firstName} ${member.lastName} - ${member.email} - ${member.points}`}
             </Text>
           </View>
         )
