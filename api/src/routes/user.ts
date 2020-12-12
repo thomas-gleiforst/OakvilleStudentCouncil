@@ -78,7 +78,7 @@ router.post('/student/points', async (req: Request, res: Response) => {
 
   const points = await getConnection()
     .createQueryBuilder()
-    .select('points')
+    .select('student.points')
     .from(Student, 'student')
     .where('student.email = :email', { email: request.email })
     .getRawOne()
@@ -102,7 +102,7 @@ router.post('/user/events', async (req: Request, res: Response) => {
   const request = req.body
   const eventIds = await getConnection()
     .createQueryBuilder()
-    .select('eventID')
+    .select('attends.eventID')
     .from(Attends, 'attends')
     .where('user.email IN (:...searchemail)', { searchemail: request.email })
     .getMany()
@@ -125,9 +125,10 @@ router.post('/user/events', async (req: Request, res: Response) => {
 router.post('/updatePoints', async (req, res) => {
   const request = req.body
 
-  let currentPoints = await getConnection()
+  // TODO: currentpoints should be a number
+  let currentPoints: number = await getConnection()
     .createQueryBuilder()
-    .select('points')
+    .select('student.points')
     .from(Student, 'student')
     .where('email = :email', { email: request.email })
     .getRawOne()
@@ -139,7 +140,7 @@ router.post('/updatePoints', async (req, res) => {
   await getConnection()
     .createQueryBuilder()
     .update(Student)
-    .set({ points: currentPoints + request.pointUpdate })
+    .set({ points: currentPoints + Number(request.pointUpdate) })
     .where('email = :email', { email: request.email })
     .execute()
     .catch((error) => {
@@ -148,16 +149,14 @@ router.post('/updatePoints', async (req, res) => {
     })
 
   // Successful return
-  return res.send('Update request sent!')
+  return res.send('Added user points')
 })
 
 /**
+ * Reset a particular student's points
  * Requires these values in the request
  * email
  */
-
-// TODO: test
-// TODO implement
 router.post('/resetPoints', async (req, res) => {
   const request = req.body
 
@@ -173,11 +172,12 @@ router.post('/resetPoints', async (req, res) => {
     })
 
   // Successful return
-  return res.send('Update request sent!')
+  return res.send('Reset user points')
 })
 
-// TODO: test
-// TODO implement
+/**
+ * Reset every student's points
+ */
 router.post('/resetAllPoints', async (req, res) => {
   const request = req.body
 
@@ -192,7 +192,7 @@ router.post('/resetAllPoints', async (req, res) => {
     })
 
   // Successful return
-  return res.send('Update request sent!')
+  return res.send('Reset all points')
 })
 
 /**

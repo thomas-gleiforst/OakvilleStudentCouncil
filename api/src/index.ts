@@ -4,7 +4,7 @@ import 'reflect-metadata'
 import { createConnection } from 'typeorm'
 
 // Route imports
-import { userApi } from './routes'
+import { eventApi, userApi } from './routes'
 
 createConnection().then((connection) => {
 
@@ -23,6 +23,7 @@ createConnection().then((connection) => {
 
   // User route
   app.use(userApi)
+  app.use(eventApi)
 
   // Start the server
   // This option will erase the database every time we start the server

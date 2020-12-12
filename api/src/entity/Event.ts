@@ -5,7 +5,7 @@ import { Attends } from './Attends'
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn("uuid")
-  eventID!: number
+  eventID!: string
 
   @Column('varchar', { length: 80 })
   eventName!: string

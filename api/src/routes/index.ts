@@ -1,5 +1,4 @@
 import userApi from './user'
+import eventApi from './events'
 
-export {
-    userApi
-}
+export { userApi, eventApi }
