@@ -5,7 +5,7 @@ import { Event } from './Event'
 @Entity()
 export class QRCodes {
   @PrimaryColumn('smallint')
-  pointValue!: Number
+  pointValue!: number
 
   @OneToOne(() => Event, { primary: true })
   @JoinColumn()

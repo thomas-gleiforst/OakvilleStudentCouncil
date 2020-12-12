@@ -11,7 +11,7 @@ export class Locations {
   address!: string
 
   @Column('smallint')
-  room!: Number
+  room!: number
 
   @OneToOne(() => Event, { primary: true })
   @JoinColumn()

@@ -1,4 +1,5 @@
-import userApi from './user'
 import eventApi from './events'
+import qrApi from './qr'
+import userApi from './user'
 
-export { userApi, eventApi }
+export { eventApi, qrApi, userApi }

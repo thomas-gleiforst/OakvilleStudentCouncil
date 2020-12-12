@@ -33,5 +33,5 @@ export class Student {
   joinDate!: Date
 
   @Column('smallint')
-  points!: Number
+  points!: number
 }

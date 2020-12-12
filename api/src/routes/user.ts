@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { getConnection } from 'typeorm'
+import { getConnection, getConnectionManager, getRepository } from 'typeorm'
 
 import { Student } from '../entity/Student'
 import { Admin } from '../entity/Admin'
@@ -115,41 +115,23 @@ router.post('/user/events', async (req: Request, res: Response) => {
 })
 
 /**
+ * Updates student points
  * Requires these values in the request
  * email
  * pointUpdate
  */
-
-// TODO: test
-// TODO implement
 router.post('/updatePoints', async (req, res) => {
   const request = req.body
-
-  // TODO: currentpoints should be a number
-  let currentPoints: number = await getConnection()
-    .createQueryBuilder()
-    .select('student.points')
-    .from(Student, 'student')
-    .where('email = :email', { email: request.email })
-    .getRawOne()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
-
-  await getConnection()
-    .createQueryBuilder()
-    .update(Student)
-    .set({ points: currentPoints + Number(request.pointUpdate) })
-    .where('email = :email', { email: request.email })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
+  const studentRepository = getRepository(Student)
+  const student = await studentRepository.findOne({
+    where: { email: request.email },
+  })
+  const newPoints: number = student.points + request.pointUpdate
+  student.points = newPoints
+  await studentRepository.save(student)
 
   // Successful return
-  return res.send('Added user points')
+  return res.send(student)
 })
 
 /**
@@ -232,6 +214,60 @@ router.post('/newStudent', async (req, res) => {
 })
 
 /**
+ * Login the student to get student details
+ * POST Request
+ * email - Email of student
+ * password - Student password
+ */
+router.post('/loginStudent', async (req, res) => {
+  const request = req.body
+
+  const student =
+    (await getConnection()
+      .createQueryBuilder()
+      .select('student')
+      .from(Student, 'student')
+      .where('student.email = :email AND student.stuPass = :password', {
+        email: request.email,
+        password: request.password,
+      })
+      .getOne()) || null
+
+  if (student) {
+    return res.send(student)
+  } else {
+    return res.status(401).send('Wrong email or password. Please try again.')
+  }
+})
+
+/**
+ * Login the student to get student details
+ * POST Request
+ * email - Email of student
+ * password - Student password
+ */
+router.post('/loginAdmin', async (req, res) => {
+  const request = req.body
+
+  const admin =
+    (await getConnection()
+      .createQueryBuilder()
+      .select('admin')
+      .from(Admin, 'admin')
+      .where('admin.email = :email AND admin.adminPass = :password', {
+        email: request.email,
+        password: request.password,
+      })
+      .getOne()) || null
+
+  if (admin) {
+    return res.send(admin)
+  } else {
+    return res.status(401).send('Wrong email or password. Please try again.')
+  }
+})
+
+/**
  * Requires these values in the request
  * email
  * stuPass - password
@@ -266,6 +302,12 @@ router.post('/newAdmin', async (req, res) => {
   return res.send(result)
 })
 
+/**
+ * Delete a student from the database
+ * POST request
+ * email - Email of student to be deleted
+ */
+
 router.post('/delStudent', async (req, res) => {
   const request = req.body
 
@@ -295,6 +337,10 @@ router.post('/delStudent', async (req, res) => {
   return res.send(result)
 })
 
+/** Delete an admin from the database
+ * POST Request
+ * email - Email of admin to be deleted
+ */
 router.post('/delAdmin', async (req, res) => {
   const request = req.body
 

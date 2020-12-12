@@ -7,6 +7,8 @@ import { EventDate } from '../entity/EventDate'
 import { Locations } from '../entity/Locations'
 import { QRCodes } from '../entity/QRCodes'
 
+import { insertEventDates } from '../utils/insertEventDates'
+
 const router = Router()
 
 /**
@@ -14,14 +16,13 @@ const router = Router()
  * Requires these values in the request
  * eventName
  * event_desc - event description
- * eventDate
- * name
+ * eventDates - Array of event dates formatted as (Date.toString())
+ * locationName
  * address
  * room
  * points
  */
-// TODO: Allow frontend to supply date
-// TODO: Test
+// TODO: Allow frontend to supply multiple date
 router.post('/createEvent', async (req, res) => {
   const request = req.body
   //creates event in Events Table
@@ -31,23 +32,11 @@ router.post('/createEvent', async (req, res) => {
   event.eventName = request.eventName
   event.event_desc = request.event_desc
   await eventRepository.insert(event)
-
+  // Grab the ID of a newly created date
   const newEventID: string = event.eventID
 
   //Sets date and eventID into Event_Dates table
-  await getConnection()
-    .createQueryBuilder()
-    .insert()
-    .into(EventDate)
-    .values({
-      eventID: newEventID,
-      eventDate: request.eventDate,
-    })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
+  await insertEventDates(newEventID, request.eventDates)
 
   await getConnection()
     .createQueryBuilder()
@@ -55,7 +44,7 @@ router.post('/createEvent', async (req, res) => {
     .into(Locations)
     .values({
       eventID: newEventID,
-      name: request.name,
+      name: request.locationName,
       address: request.address,
       room: request.room,
     })
@@ -84,17 +73,14 @@ router.post('/createEvent', async (req, res) => {
 })
 
 /**
- * Returns QR Code entity
- * Requires these values in the request
- * eventID
+ * Returns Event entity
  */
 //Returns event details for the event calendar
-//TODO: Test
 router.get('/events', async (req: Request, res: Response) => {
   const eventDetails = await getConnection()
-    .createQueryBuilder()
-    .select('event')
-    .from(Event, 'event')
+    .getRepository(Event)
+    .createQueryBuilder('event')
+    .leftJoinAndSelect('event.eventDate','eventDate')
     .getMany()
     .catch((error) => {
       console.log(error)
@@ -110,6 +96,7 @@ router.get('/events', async (req: Request, res: Response) => {
  * eventID
  */
 //TODO: Test
+// TODO: Return more event details
 router.post('/eventDetails', async (req: Request, res: Response) => {
   const request = req.body
   const eventDetails = await getConnection()
@@ -136,10 +123,11 @@ router.post('/eventDetails', async (req: Request, res: Response) => {
  */
 // TODO: Return new event details
 // TODO: Can you update certain attributes and leave others the same?
+// FIXME: Use repository method in order to do partial updates
 router.post('/events/updateDesc', async (req: Request, res: Response) => {
   const request = req.body
 
-  await getConnection()
+  const event = await getConnection()
     .createQueryBuilder()
     .update(Event)
     .set({ event_desc: request.eventDesc })
@@ -150,7 +138,7 @@ router.post('/events/updateDesc', async (req: Request, res: Response) => {
       return res.send(error)
     })
 
-  return res.send('Updated event description')
+  return res.send(event)
 })
 
 /**
@@ -182,31 +170,33 @@ router.post('/events/updateName', async (req: Request, res: Response) => {
  * eventID
  */
 
-// TODO: test
 //Returns all attendees of the event
+// FIXME: Nicer output
 router.post('/events/viewAttendees', async (req: Request, res: Response) => {
   const request = req.body
-  const points = await getConnection()
 
-  const updateDetail = request.updateDetail
-
-  await getConnection()
+  const attendees = await getConnection()
     .createQueryBuilder()
-    .select('attends.email')
+    .select('attends')
     .from(Attends, 'attends')
-    .where('eventID = :eventID', { eventID: request.eventID })
-    .getMany()
+    .where('attends.eventID = :eventID', { eventID: request.eventID })
+    .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
+
+  console.log(attendees)
+  return res.send(attendees)
 })
 
-//TODO: test
-//Deletes event from the database
+/**
+ * Deletes event from the database
+ * POST Request
+ * eventID
+ */
 router.post('/deleteEvent', async (req: Request, res: Response) => {
   const request = req.body
-  const points = await getConnection()
 
   const result = await getConnection()
     .createQueryBuilder()
@@ -223,8 +213,7 @@ router.post('/deleteEvent', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(EventDate)
-    .where('eventID = :eventID', { email: request.eventID })
-    .andWhere('eventDate = :date', { date: request.date })
+    .where('eventID = :eventID', { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -235,7 +224,7 @@ router.post('/deleteEvent', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(QRCodes)
-    .where('eventID = :eventID', { email: request.eventID })
+    .where('eventID = :eventID', { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -246,7 +235,7 @@ router.post('/deleteEvent', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(Locations)
-    .where('eventID = :eventID', { email: request.eventID })
+    .where('eventID = :eventID', { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -257,12 +246,16 @@ router.post('/deleteEvent', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(Event)
-    .where('eventID = :eventID', { email: request.eventID })
+    .where('eventID = :eventID', { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
+
+  // TODO: Send back event id and event name deleted
+
+  res.send('Deleted event')
 })
 
 export default router
