@@ -14,7 +14,7 @@ export class Admin {
   @Column("varchar", {length: 80})
   firstName!: string;
   
-  @Column("varchar", {length: 80})
+  @Column("varchar", {length: 80, nullable: true})
   middleName!: string;
 
   @Column("varchar", {length: 80})

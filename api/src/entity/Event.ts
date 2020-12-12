@@ -12,7 +12,7 @@ export class Event {
   @Column('varchar', { length: 80 })
   eventName!: string
 
-  @Column('varchar', { length: 2048 })
+  @Column('varchar', { length: 2048, nullable: true })
   event_desc!: string
 
   @OneToMany(() => EventDate, eventDate => eventDate.event)
