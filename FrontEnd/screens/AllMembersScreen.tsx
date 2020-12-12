@@ -1,20 +1,25 @@
-import * as React from "react";
-import { Platform, StyleSheet } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import React, { useState } from "react"
+import { Platform, StyleSheet } from "react-native"
+import { TextInput } from "react-native-gesture-handler"
 
-import { Text, View } from "../components/Themed";
+import { Text, View } from "../components/Themed"
 
 export default function AllMember() {
+  const [name, setName] = useState("")
+
   var members = [
     { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
     { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
-  ];
+  ]
+
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.detailSearch}
         placeholder="Enter Name, Email, or Point Value"
         placeholderTextColor="#FFB61D"
+        value={name}
+        onChangeText={(text) => setName(text)}
       />
       {members.map((member) => {
         return (
@@ -23,10 +28,10 @@ export default function AllMember() {
               {member.name + " - " + member.email + " - " + member.points}
             </Text>
           </View>
-        );
+        )
       })}
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -53,9 +58,9 @@ const styles = StyleSheet.create({
         width: 400,
       },
       default: {
-        width: "90%"
-      }
-    })
+        width: "90%",
+      },
+    }),
   },
   memberDetails: {
     color: "#FFB61D",
@@ -76,8 +81,8 @@ const styles = StyleSheet.create({
         width: 400,
       },
       default: {
-        width: "90%"
-      }
-    })
+        width: "90%",
+      },
+    }),
   },
-});
+})
