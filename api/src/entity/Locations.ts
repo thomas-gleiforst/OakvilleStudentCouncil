@@ -4,10 +4,10 @@ import { Event } from './Event'
 // TODO: Set column types of necessary (default in varchar255 or int)
 @Entity()
 export class Locations {
-  @Column()
+  @Column('varchar', {length: 255})
   name!: string
 
-  @Column()
+  @Column('varchar', {length: 255})
   address!: string
 
   @Column('smallint')
