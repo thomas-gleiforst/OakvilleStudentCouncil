@@ -76,18 +76,18 @@ router.post('/viewBarcode', async (req: Request, res: Response) => {
 router.post('/viewLocations', async (req: Request, res: Response) => {
   const request = req.body
 
-  const viewQRCode = await getConnection()
+  const location = await getConnection()
     .createQueryBuilder()
     .select('locations')
     .from(Locations, 'locations')
-    //.where('eventID = :eventID', { eventID: request.eventID })
+    .where('locations.eventIDeventId = :eventID', { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
 
-  return res.send(viewQRCode)
+  return res.send(location)
 })
 
 export default router

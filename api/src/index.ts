@@ -11,15 +11,18 @@ createConnection().then((connection) => {
   // Create and setup Express app
   const app = express()
   const port = process.env.PORT || 8080
+  // const port = 19006
 
   // TODO: Implement more strict CORS system for production
   app.use(cors())
   app.use(express.json()) // Expect a JSON response
 
   // Home route
+  /*
   app.get('/', (req: Request, res: Response) => {
     res.send('Welcome to the StuCo API!')
   })
+  */
 
   // User route
   app.use(userApi)

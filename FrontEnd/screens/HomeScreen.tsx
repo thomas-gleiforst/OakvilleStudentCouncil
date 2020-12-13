@@ -1,36 +1,77 @@
-import * as React from "react";
-import { Pressable, StyleSheet, TextInput, Image, Platform, Dimensions } from "react-native";
+import React, { useState, useContext, useEffect } from "react"
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  Image,
+  Platform,
+  Dimensions,
+} from "react-native"
 
-import { Text, View } from "../components/Themed";
+import { Text, View } from "../components/Themed"
 
-function createAccount( navigation: any) {
-  console.log(navigation)
-  return navigation.navigate("CreateUser")
-}
-
-function logIn(navigation: any) {
-  // if authenticated
-  return navigation.navigate("Main")
-}
+import UserContext from "../UserContext"
 
 export default function Home({ navigation }: any) {
+  const userContext = useContext(UserContext)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const createAccount = (navigation: any) => {
+    return navigation.navigate("CreateUser")
+  }
+
+  const logIn = (navigation: any) => {
+    // if authenticated
+    fetch("http://localhost:8080/loginStudent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    }).then((response) => {
+      if (response.status === 401) {
+        response.text().then((text) => {
+          alert(text)
+        })
+      } else {
+        userContext.setEmail(email)
+        return navigation.navigate("Main")
+      }
+    })
+  }
+
+  useEffect(() => {}, [userContext])
+
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/images/OHS-Logo.png")} />
+      <Image
+        style={styles.logo}
+        source={require("../assets/images/OHS-Logo.png")}
+      />
       <View>
         <TextInput
           style={styles.title}
           placeholder="School Email"
           placeholderTextColor="#fff"
           textContentType="emailAddress"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           style={styles.title}
           placeholder="Password"
           placeholderTextColor="#fff"
           textContentType="password"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
         />
-        <Pressable style={styles.clickableText} onPress={() => createAccount(navigation)}>
+        <Pressable
+          style={styles.clickableText}
+          onPress={() => createAccount(navigation)}
+        >
           <Text style={styles.clickableText}>Create Account</Text>
         </Pressable>
         <Pressable onPress={() => logIn(navigation)}>
@@ -38,7 +79,7 @@ export default function Home({ navigation }: any) {
         </Pressable>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -56,12 +97,12 @@ const styles = StyleSheet.create({
     margin: 15,
     ...Platform.select({
       web: {
-        width: Dimensions.get("window").width*.45,
+        width: Dimensions.get("window").width * 0.45,
       },
       default: {
-        width: Dimensions.get("window").width*.60,
-      }
-    })
+        width: Dimensions.get("window").width * 0.6,
+      },
+    }),
   },
   button: {
     color: "#FFB61D",
@@ -75,11 +116,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     ...Platform.select({
       web: {
-        width: Dimensions.get("window").width*.45,
+        width: Dimensions.get("window").width * 0.45,
         boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
       },
       default: {
-        width: Dimensions.get("window").width*.60,
+        width: Dimensions.get("window").width * 0.6,
         shadowColor: "#000",
         shadowOffset: {
           width: 1,
@@ -89,7 +130,7 @@ const styles = StyleSheet.create({
         shadowRadius: 2.5,
         elevation: 5,
       },
-    })
+    }),
   },
   clickableText: {
     color: "#fff",
@@ -101,5 +142,5 @@ const styles = StyleSheet.create({
   logo: {
     width: "90%",
     height: "25%",
-  }
-});
+  },
+})

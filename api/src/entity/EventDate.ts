@@ -9,5 +9,5 @@ export class EventDate {
   @ManyToOne(() => Event, (event: Event) => event.eventDate, {
     primary: true,
   })
-  event!: string
+  event!: Event
 }

@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, Vibration, StyleSheet, Alert } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, Vibration, StyleSheet, Alert, Platform } from 'react-native'
 import { BarCodeScanner } from 'expo-barcode-scanner'
 import Navigation from '../navigation'
+import UserContext from "../UserContext"
 
 export default function Scanner({ navigation }: any) {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null)
+  const userContext = useContext(UserContext)
+  const [hasCameraPermission, setHasCameraPermission] = useState(false)
   const [scannedItem, setScannedItem] = useState({ type: null, data: null })
 
   useEffect(() => {
     ;(async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync()
-      await setHasCameraPermission(status === 'granted')
-      await resetScanner()
+      if (Platform.OS !== "web") {
+        const { status } = await BarCodeScanner.requestPermissionsAsync()
+        setHasCameraPermission(status === 'granted')
+        await resetScanner()
+      }
     })()
   }, [])
 
@@ -19,14 +23,23 @@ export default function Scanner({ navigation }: any) {
     setScannedItem({ type: null, data: null })
   }
 
-  const onBarCodeRead = ({ type, data }) => {
+  const onBarCodeRead = ({ type, data }: any) => {
     if (scannedItem.data == null) {
       Vibration.vibrate()
       setScannedItem({ data, type })
       
+      fetch("http://localhost:8080/markAttended", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          email: userContext.email, //global email,
+          eventID: data.split("-")[0],
+        }),
+      })
+
       // add points
       navigation.goBack()
-      Alert.alert("5 points added")
+      Alert.alert("Points added")
 
       setTimeout(resetScanner, 1000)
 
@@ -47,6 +60,10 @@ export default function Scanner({ navigation }: any) {
     )
   }
 
+  if (Platform.OS === "web") {
+    return <Text>No access to camera on Web clients</Text>
+  }
+  
   if (hasCameraPermission === null) {
     return <Text>Requesting for camera permission</Text>
   }

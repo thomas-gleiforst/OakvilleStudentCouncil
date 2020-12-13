@@ -31,12 +31,12 @@ router.post('/createEvent', async (req, res) => {
   const event = new Event()
   event.eventName = request.eventName
   event.event_desc = request.event_desc
-  await eventRepository.insert(event)
+  await eventRepository.save(event)
   // Grab the ID of a newly created date
   const newEventID: string = event.eventID
 
   //Sets date and eventID into Event_Dates table
-  await insertEventDates(newEventID, request.eventDates)
+  await insertEventDates(event, request.eventDates)
 
   await getConnection()
     .createQueryBuilder()
@@ -106,7 +106,7 @@ router.post('/eventDetails', async (req: Request, res: Response) => {
     .where('event.eventID = :givenEventID', {
       givenEventID: request.eventID,
     })
-    .getMany()
+    .getOne()
     .catch((error) => {
       console.log(error)
       return res.send(error)
@@ -215,10 +215,6 @@ router.post('/deleteEvent', async (req: Request, res: Response) => {
     .from(EventDate)
     .where('eventID = :eventID', { eventID: request.eventID })
     .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
 
   await getConnection()
     .createQueryBuilder()
