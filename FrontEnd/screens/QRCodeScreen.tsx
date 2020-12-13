@@ -1,27 +1,95 @@
-import * as React from "react";
+import React, { useState, useEffect, useContext } from "react"
 import { Dimensions, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import QR from "react-native-qrcode-svg";
 
+import UserContext from "../UserContext"
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
-export default function QRCode() {
-  let meeting = {
-    name: "General Meeting",
-    date: "1/7/20",
-    time: "5:00 pm",
-    attendees: [
-      { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
-      { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
-    ],
-  };
+export default function QRCode({ navigation, route }: any) {
+  const userContext = useContext(UserContext)
+  const [event, setEvent] = useState({
+    eventID: "default",
+    eventName: "",
+    event_desc: "",
+    eventDate: new Date(),
+  })
+  const emptyUser = {
+    email: "",
+    stuPass: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    loginDate: new Date(),
+    joinDate: new Date(),
+    points: 0,
+  }
+
+  const [attendees, setAttendees] = useState([emptyUser])
+  const [QRCode, setQRCode] = useState({
+    pointValue: 0,
+    eventID: ""
+  })
+
+  useEffect(() => {
+    if (!userContext.eventID) return
+
+    const fetchData = async () => {
+      fetch("http://localhost:8080/eventDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setEvent(json) // ?
+        })
+    }
+    const fetchAttendees = async () => {
+      fetch("http://localhost:8080/events/viewAttendees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setAttendees(json)
+        })
+    }
+    const fetchQRCode = async () => {
+      fetch("http://localhost:8080/events/viewBarcode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setQRCode(json)
+        })
+    }
+    const unsubscribe = navigation.addListener("focus", () => {
+      console.log("run")
+      console.log(route)
+      fetchData()
+      fetchAttendees()
+    })
+
+    return unsubscribe
+  }, [navigation, userContext])
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{meeting.name}</Text>
+      <Text style={styles.title}>{event.eventName}</Text>
       <View style={styles.QRcontainer}>
         <QR
-          value={meeting.name + meeting.date + meeting.time}
+          value={QRCode.eventID+"-"+QRCode.pointValue}
           backgroundColor="transparent"
           size={Dimensions.get("window").width*.6}
           logo={require("../assets/images/smallLogo.png")}
@@ -29,10 +97,10 @@ export default function QRCode() {
         />
       </View>
       <View style={styles.attendees}>
-        <Text style={styles.subtitle}>Attendees ({meeting.attendees.length})</Text>
+        <Text style={styles.subtitle}>Attendees ({attendees.length})</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
-          {meeting.attendees.map((attendee) => {
-            return <Text style={styles.attendee} key={attendee.name}>{attendee.name}</Text>;
+          {attendees.map((attendee) => {
+            return <Text style={styles.attendee} key={attendee.firstName+attendee.lastName}>{attendee.firstName} {attendee.lastName}</Text>;
           })}
         </ScrollView>
       </View>

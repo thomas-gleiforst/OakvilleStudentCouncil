@@ -16,5 +16,5 @@ export class Event {
   event_desc!: string
 
   @OneToMany(() => EventDate, eventDate => eventDate.event)
-  eventDate: EventDate
+  eventDate: EventDate[]
 }

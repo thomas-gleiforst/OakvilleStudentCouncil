@@ -1,58 +1,117 @@
-import * as React from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Dimensions, Platform, Pressable, StyleSheet } from "react-native"
 import { Text, View } from "../components/Themed"
+import UserContext from "../UserContext"
 
 export default function Main({ navigation }: any) {
+  const userContext = useContext(UserContext)
+  const [events, setEvents] = useState([
+    {
+      eventID: "",
+      eventName: "",
+      event_desc: "",
+      eventDate: [{ eventDate: "" }],
+    },
+  ])
+  const [user, setUser] = useState({
+    email: "",
+    stuPass: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    loginDate: new Date(),
+    joinDate: new Date(),
+    points: 0,
+  })
+  useEffect(() => {
+    if (!userContext || !userContext.email) return
+
+    const fetchData = async () => {
+      fetch("http://localhost:8080/events", {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setEvents(json)
+        })
+    }
+    const fetchUser = async () => {
+      fetch("http://localhost:8080/student", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userContext.email,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setUser(json)
+        })
+    }
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData()
+      fetchUser()
+    })
+
+    return unsubscribe
+  }, [navigation, userContext])
+
   const scanQR = (navigation: any) => {
     navigation.navigate("Scanner")
   }
 
-  var username: string = "Thomas"
-  var events = [
-    {
-      title: "General Meeting 1",
-      date: new Date().toLocaleString(),
-      room: "204",
-      location: "Oakville High School",
-    },
-    {
-      title: "Volunteer at OMS",
-      date: new Date(5000).toLocaleString(),
-      room: "205",
-      location: "Oakville High School",
-    },
-  ]
-  var points = 6
   var pointGoal = 100
+  let monthNum: number = 1
+  let year: number = 2021
+  let offset: number = 5
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome {username}.</Text>
-      <Text style={styles.title}>What would you like to do?</Text>
-      <Pressable onPress={() => scanQR(navigation)}>
-        <View style={styles.event}>
-          <Text style={styles.eventTitle}>Scan QR code</Text>
-        </View>
-      </Pressable>
-      <Text style={styles.title}>Here are your next events.</Text>
-      {events.map((event) => {
-        return (
-          <Pressable key={event.title}>
+    <>
+      {userContext && userContext.email ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>Welcome {user.firstName}.</Text>
+          <Text style={styles.title}>
+            You have {user.points} out of {pointGoal} points
+          </Text>
+          <Text style={styles.title}>What would you like to do?</Text>
+          <Pressable onPress={() => scanQR(navigation)}>
             <View style={styles.event}>
-              <Text style={styles.eventTitle}>{event.title}</Text>
-              <Text style={styles.eventDetails}>
-                Time: {event.date}
-              </Text>
-              <Text style={styles.eventDetails}>Room: {event.room}</Text>
-              <Text style={styles.eventDetails}>{event.location}</Text>
+              <Text style={styles.eventTitle}>Scan QR code</Text>
             </View>
           </Pressable>
-        )
-      })}
-      <Pressable onPress={() => navigation.navigate("Calendar")}>
-        <Text style={styles.link}>Open Calendar</Text>
-      </Pressable>
-    </View>
+          <Text style={styles.title}>Here are your next events.</Text>
+          {events &&
+            events.map((event) => {
+              return event.eventDate.map((date) => {
+                if (new Date(date.eventDate) > new Date()) {
+                  return (
+                    <Pressable key={event.eventName}>
+                      <View style={styles.event}>
+                        <Text style={styles.eventTitle}>{event.eventName}</Text>
+                        <Text style={styles.eventDetails}>
+                          Date: {new Date(date.eventDate).toLocaleDateString()}
+                        </Text>
+                        <Text style={styles.eventDetails}>
+                          Time: {new Date(date.eventDate).toLocaleTimeString()}
+                        </Text>
+                        {/*<Text style={styles.eventDetails}>Room: {event.room}</Text>
+              <Text style={styles.eventDetails}>{event.location}</Text>*/}
+                      </View>
+                    </Pressable>
+                  )
+                }
+              })
+            })}
+          <Pressable onPress={() => navigation.navigate("Calendar")}>
+            <Text style={styles.link}>Open Calendar</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.title}>Please sign in</Text>
+        </View>
+      )}
+    </>
   )
 }
 

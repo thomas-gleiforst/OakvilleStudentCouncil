@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState, useEffect, useContext } from "react"
 import {
   Dimensions,
   Platform,
@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from "react-native"
 
+import UserContext from "../UserContext"
 import { Text, View } from "../components/Themed"
 
 function changeEvent() {
@@ -17,70 +18,158 @@ function resort() {
   return false
 }
 
-export default function MeetingStat() {
-  let events = [
-    { name: "General Meeting", date: "1/7/20", time: "5:00 pm" },
-    { name: "OMS Service Hrs", date: "1/12/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/14/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/21/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/28/20", time: "5:00 pm" },
-  ]
-  let event = {
-    name: "General Meeting",
-    date: "1/7/20",
-    time: "5:00 pm",
-    totalPoints: "30",
-    attendees: [
-      { name: "Thomas Gleiforst", email: "18gleiforstt@msdr9.edu", points: 6 },
-      { name: "Tommy Dong", email: "18dongt@msdr9.edu", points: 24 },
-    ],
+export default function MeetingStat({ navigation, route }: any) {
+  const userContext = useContext(UserContext)
+  const emptyUser = {
+    email: "",
+    stuPass: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    loginDate: new Date(),
+    joinDate: new Date(),
+    points: 0,
   }
-  let sortOptions = Object.keys(event.attendees[0])
+  const [event, setEvent] = useState({
+    eventID: "",
+    eventName: "",
+    event_desc: "",
+    eventDate: new Date(),
+  })
+  const [attendees, setAttendees] = useState([emptyUser])
+  const [pointValue, setPointValue] = useState(0)
+
+  let sortOptions = Object.keys(emptyUser)
   let sortBy = sortOptions[0]
+
+  useEffect(() => {
+    if (!userContext.eventID) return
+
+    const fetchData = async () => {
+      fetch("http://localhost:8080/eventDetails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setEvent(json) // ?
+        })
+    }
+    const fetchAttendees = async () => {
+      fetch("http://localhost:8080/events/viewAttendees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setAttendees(json)
+        })
+    }
+    const fetchQRCode = async () => {
+      fetch("http://localhost:8080/events/viewBarcode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventID: userContext.eventID,
+        }),
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          setPointValue(json.pointValue)
+        })
+    }
+    const unsubscribe = navigation.addListener("focus", () => {
+      console.log("run")
+      console.log(route)
+      fetchData()
+      fetchAttendees()
+    })
+
+    return unsubscribe
+  }, [navigation, userContext])
+
+  const displayEvent = (navigation: any) => {
+    navigation.navigate("QRCode", { event: event.eventID })
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{event.name}</Text>
-      <Pressable onPress={changeEvent}>
-        <Text style={styles.button}>Change Event</Text>
-      </Pressable>
-      <View style={styles.analytics}>
-        <View style={styles.stats}>
-          <Text style={styles.subtitle}>Stats</Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.attendee}>
-              <Text style={styles.stat}>Total Attended</Text>
-              <Text style={styles.stat}>{event.attendees.length}</Text>
-            </View>
-            <View style={styles.attendee}>
-              <Text style={styles.stat}>Total Points</Text>
-              <Text style={styles.stat}>{event.totalPoints}</Text>
-            </View>
-          </ScrollView>
-        </View>
-        <View style={styles.attendees}>
-          <Text style={styles.subtitle}>
-            <Text>Attendance</Text>
-          </Text>
-          <Pressable onPress={resort}>
-            <Text style={styles.button}>Sort By: {sortBy}</Text>
-          </Pressable>
-          <View style={styles.attendee}>
-            <Text style={styles.header}>Attendees</Text>
-            <Text style={styles.header}>Points</Text>
+    <>
+      {event ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>{event.eventName}</Text>
+          <View style={styles.row}>              
+            {/* Disabled changing event viewed - not implemented
+            <Pressable onPress={changeEvent}>
+              <Text style={styles.button}>Change Event</Text>
+            </Pressable>              
+            */}
+            <Pressable onPress={() => displayEvent(navigation)}>
+              <Text style={styles.button}>Display Event</Text>
+            </Pressable>
           </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {event.attendees.map((attendee) => {
-              return (
-                <View style={styles.attendee} key={attendee.name}>
-                  <Text style={styles.stat}>{attendee.name}</Text>
-                  <Text style={styles.stat}>{attendee.points}</Text>
+          <View style={styles.analytics}>
+            <View style={styles.stats}>
+              <Text style={styles.subtitle}>Stats</Text>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <View style={styles.attendee}>
+                  <Text style={styles.stat}>Total Attended</Text>
+                  <Text style={styles.stat}>{attendees.length}</Text>
                 </View>
-              )
-            })}
-          </ScrollView>
+                <View style={styles.attendee}>
+                  <Text style={styles.stat}>Total Points</Text>
+                  <Text style={styles.stat}>
+                    {attendees.reduce((a, b) => a + b.points, 0)}
+                  </Text>
+                </View>
+                <View style={styles.attendee}>
+                  <Text style={styles.stat}>Point Value</Text>
+                  <Text style={styles.stat}>
+                    {pointValue}
+                  </Text>
+                </View>
+              </ScrollView>
+            </View>
+            <View style={styles.attendees}>
+              <Text style={styles.subtitle}>
+                <Text>Attendance</Text>
+              </Text>
+              {/* Disabled sorting of attendance list - not implemented
+              <Pressable onPress={resort}>
+                <Text style={styles.button}>Sort By: {sortBy}</Text>
+              </Pressable>
+              */}
+              <View style={styles.attendee}>
+                <Text style={styles.header}>Attendees</Text>
+                <Text style={styles.header}>Points</Text>
+              </View>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {attendees.map((attendee) => {
+                  return (
+                    <View
+                      style={styles.attendee}
+                      key={attendee.firstName + attendee.lastName}
+                    >
+                      <Text style={styles.stat}>
+                        {attendee.firstName} {attendee.lastName}
+                      </Text>
+                      <Text style={styles.stat}>{attendee.points}</Text>
+                    </View>
+                  )
+                })}
+              </ScrollView>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
+      ) : (
+        <Text>Loading...</Text>
+      )}
+    </>
   )
 }
 
@@ -88,6 +177,10 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     height: "100%",
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   analytics: {
     flexDirection: "column",

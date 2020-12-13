@@ -1,18 +1,50 @@
-import * as React from "react"
+import React, { useState, useEffect, useContext } from "react"
+import { Pressable } from "react-native"
 import { Platform, StyleSheet } from "react-native"
 import { Text, View } from "../components/Themed"
+import UserContext from "../UserContext"
 
-export default function Calendar() {
+export default function Calendar({ navigation }: any) {
+  const userContext = useContext(UserContext)
+  const [events, setEvents] = useState([
+    {
+      eventID: "",
+      eventName: "",
+      event_desc: "",
+      eventDate: [{ eventDate: "" }],
+    },
+  ])
+
   let month: string = "January"
+  let monthNum: number = 1
+  let year: number = 2021
   let offset: number = 5
   let lastDay: number = 31
-  let events = [
-    { name: "General Meeting", date: "1/7/20", time: "5:00 pm" },
-    { name: "OMS Service Hrs", date: "1/12/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/14/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/21/20", time: "5:00 pm" },
-    { name: "General Meeting", date: "1/28/20", time: "5:00 pm" },
-  ]
+
+  useEffect(() => {
+    const fetchData = async () =>
+      fetch("http://localhost:8080/events", {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((json) => {
+          console.log(json)
+          setEvents(json)
+        })
+    
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData()
+    })
+
+    return unsubscribe
+  }, [navigation])
+
+  const meetingStats = (eventID: string) => {
+    console.log(eventID)
+    userContext.setEventID(eventID)
+    navigation.navigate("MeetingStat")
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{month}</Text>
@@ -20,24 +52,46 @@ export default function Calendar() {
         return (
           <View style={styles.week} key={week}>
             {Array.from(Array(7).keys()).map((day) => {
+              let dateCalc = day + 7 * week + 1 - offset
               return (
-                <View style={styles.day} key={day + 7 * week + 1 - offset}>
+                <View style={styles.day} key={dateCalc}>
                   <Text style={styles.dayText}>
-                    {day + 7 * week + 1 - offset > 0 && day + 7 * week + 1 - offset <= lastDay ? day + 7 * week + 1 - offset : ""}
+                    {dateCalc > 0 && dateCalc <= lastDay ? dateCalc : ""}
                   </Text>
                   {events.map((event) => {
-                    if (
-                      parseInt(event.date.split("/")[1]) ==
-                      day + 7 * week + 1 - offset
-                    ) {
-                      return (
-                        <View style={styles.event} key={event.name}>
-                          <Text style={styles.eventText}>{event.name}</Text>
-                        </View>
-                      )
-                    } else {
-                      return
-                    }
+                    return event.eventDate.map((date) => {
+                      if (
+                        parseInt(
+                          new Date(date.eventDate)
+                            .toLocaleDateString()
+                            .split("/")[0]
+                        ) === monthNum &&
+                        parseInt(
+                          new Date(date.eventDate)
+                            .toLocaleDateString()
+                            .split("/")[1]
+                        ) === dateCalc &&
+                        parseInt(
+                          new Date(date.eventDate)
+                            .toLocaleDateString()
+                            .split("/")[2]
+                        ) === year
+                      ) {
+                        return (
+                          <Pressable
+                            style={styles.event}
+                            key={event.eventName}
+                            onPress={() => meetingStats(event.eventID)}
+                          >
+                            <Text style={styles.eventText}>
+                              {event.eventName}
+                            </Text>
+                          </Pressable>
+                        )
+                      } else {
+                        return null
+                      }
+                    })
                   })}
                 </View>
               )
@@ -104,7 +158,7 @@ const styles = StyleSheet.create({
       },
       default: {
         fontSize: 8,
-      }
-    })
+      },
+    }),
   },
 })

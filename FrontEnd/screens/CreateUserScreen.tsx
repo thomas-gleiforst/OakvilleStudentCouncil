@@ -1,40 +1,106 @@
-import { processFontFamily } from "expo-font";
-import * as React from "react";
-import { Button, Dimensions, Platform, Pressable, StyleSheet, TextInput } from "react-native";
+import React, { useState } from "react"
 
-import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
+import {
+  Button,
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TextInput,
+} from "react-native"
 
-function createAccount() {
-  return false;
-}
+import EditScreenInfo from "../components/EditScreenInfo"
+import { Text, View } from "../components/Themed"
 
-export default function CreateUser() {
+export default function CreateUser({ navigation }: any) {
+  const [firstName, setFirstName] = useState("")
+  const [middleName, setMiddleName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
+  const createAccount = (navigation: any) => {
+    if (firstName && lastName && email && password && confirmPassword) {
+      if (password === confirmPassword) {
+        fetch("http://localhost:8080/newStudent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: email,
+            stuPass: password,
+            firstName: firstName,
+            middleName: middleName,
+            lastName: lastName,
+          }),
+        })
+        .then((response) => response.json())
+        .then((response) => console.log(response))
+        navigation.navigate("Main")
+      }
+    }
+    else {
+      alert("Not sent for some reason")
+    }
+  }
+
   return (
     <View style={styles.container}>
+      <TextInput
+        style={styles.title}
+        placeholder="First Name"
+        textContentType="givenName"
+        placeholderTextColor="#fff"
+        value={firstName}
+        onChangeText={(text) => setFirstName(text)}
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Middle Name"
+        textContentType="middleName"
+        placeholderTextColor="#fff"
+        value={middleName}
+        onChangeText={(text) => setMiddleName(text)}
+      />
+      <TextInput
+        style={styles.title}
+        placeholder="Last Name"
+        textContentType="familyName"
+        placeholderTextColor="#fff"
+        value={lastName}
+        onChangeText={(text) => setLastName(text)}
+      />
       <TextInput
         style={styles.title}
         placeholder="School Email"
         textContentType="emailAddress"
         placeholderTextColor="#fff"
+        value={email}
+        onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         style={styles.title}
         placeholder="Password"
         textContentType="password"
         placeholderTextColor="#fff"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
       />
       <TextInput
         style={styles.title}
         placeholder="Confirm Password"
         textContentType="password"
         placeholderTextColor="#fff"
+        secureTextEntry={true}
+        value={confirmPassword}
+        onChangeText={(text) => setConfirmPassword(text)}
       />
-      <Pressable onPress={createAccount}>
+      <Pressable onPress={() => createAccount(navigation)}>
         <Text style={styles.button}>Create Account</Text>
       </Pressable>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -51,12 +117,12 @@ const styles = StyleSheet.create({
     margin: 15,
     ...Platform.select({
       web: {
-        width: Dimensions.get("window").width*.45,
+        width: Dimensions.get("window").width * 0.45,
       },
       default: {
-        width: Dimensions.get("window").width*.60,
-      }
-    })
+        width: Dimensions.get("window").width * 0.6,
+      },
+    }),
   },
   button: {
     color: "#FFB61D",
@@ -70,11 +136,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     ...Platform.select({
       web: {
-        width: Dimensions.get("window").width*.45,
+        width: Dimensions.get("window").width * 0.45,
         boxShadow: "1px 5px 5px rgba(0,0,0,0.25)",
       },
       default: {
-        width: Dimensions.get("window").width*.60,
+        width: Dimensions.get("window").width * 0.6,
         shadowColor: "#000",
         shadowOffset: {
           width: 1,
@@ -84,6 +150,6 @@ const styles = StyleSheet.create({
         shadowRadius: 2.5,
         elevation: 5,
       },
-    })
+    }),
   },
-});
+})
