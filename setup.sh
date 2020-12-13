@@ -2,7 +2,7 @@
 
 echo "STARTING SETUP"
 npm instll -g yarn
-cd Frontend
+cd FrontEnd
 yarn install
 cd ../
 cd api
