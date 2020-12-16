@@ -9,7 +9,7 @@
 psql -U postgres
 
 # MacOS/Linux
-sudo psql -u postgres
+sudo psql -U postgres
 ```
 
 2. Create the dev database environment inside the psql environment.

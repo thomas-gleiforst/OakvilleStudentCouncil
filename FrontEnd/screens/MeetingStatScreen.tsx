@@ -98,6 +98,8 @@ export default function MeetingStat({ navigation, route }: any) {
     navigation.navigate("QRCode", { event: event.eventID })
   }
 
+  console.log(attendees)
+
   return (
     <>
       {event ? (
@@ -124,7 +126,7 @@ export default function MeetingStat({ navigation, route }: any) {
                 <View style={styles.attendee}>
                   <Text style={styles.stat}>Total Points</Text>
                   <Text style={styles.stat}>
-                    {attendees.reduce((a, b) => a + b.points, 0)}
+                    {attendees.reduce((a, b) => a + b.points, 0) || 0}
                   </Text>
                 </View>
                 <View style={styles.attendee}>
