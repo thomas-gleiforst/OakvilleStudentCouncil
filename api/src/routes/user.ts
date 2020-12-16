@@ -82,7 +82,27 @@ router.post("/student/points", async (req: Request, res: Response) => {
       console.log(error)
       return res.send(error)
     })
-  res.send(points)
+  return res.send(points)
+})
+
+/**
+ * Updates student points
+ * Requires these values in the request
+ * email
+ * pointUpdate
+ */
+router.post("/updatePoints", async (req, res) => {
+  const request = req.body
+  const studentRepository = getRepository(Student)
+  const student = await studentRepository.findOne({
+    where: { email: request.email },
+  })
+  const newPoints: number = student.points + request.pointUpdate
+  student.points = newPoints
+  await studentRepository.save(student)
+
+  // Successful return
+  return res.send(student)
 })
 
 /**
