@@ -4,7 +4,6 @@ import { getConnection, getRepository, getManager } from "typeorm"
 import { Student } from "../entity/Student"
 import { Admin } from "../entity/Admin"
 import { Attends } from "../entity/Attends"
-import { request } from "http"
 
 const router = Router()
 
@@ -86,7 +85,27 @@ router.post("/student/points", async (req: Request, res: Response) => {
       console.log(error)
       return res.send(error)
     })
-  res.send(points)
+  return res.send(points)
+})
+
+/**
+ * Updates student points
+ * Requires these values in the request
+ * email
+ * pointUpdate
+ */
+router.post("/updatePoints", async (req, res) => {
+  const request = req.body
+  const studentRepository = getRepository(Student)
+  const student = await studentRepository.findOne({
+    where: { email: request.email },
+  })
+  const newPoints: number = student.points + request.pointUpdate
+  student.points = newPoints
+  await studentRepository.save(student)
+
+  // Successful return
+  return res.send(student)
 })
 
 /**
@@ -165,6 +184,168 @@ router.post("/loginAdmin", async (req, res) => {
   } else {
     return res.status(401).send("Wrong email or password. Please try again.")
   }
+})
+
+router.post("/newStudent", async (req, res) => {
+  const request = req.body
+
+  // TODO: Salt and hash user password
+  const result = await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(Student)
+    .values({
+      email: request.email,
+      stuPass: request.stuPass,
+      firstName: request.firstName,
+      middleName: request.middleName,
+      lastName: request.lastName,
+      loginDate: Date(),
+      points: 0,
+    })
+    .execute()
+    .catch((error) => {
+      // If there is an error
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
+})
+
+router.post("/newAdmin", async (req, res) => {
+  const request = req.body
+
+  // TODO: Salt and hash user passwordd
+  const result = await getConnection()
+    .createQueryBuilder()
+    .insert()
+    .into(Admin)
+    .values({
+      email: request.email,
+      adminPass: request.adminPass,
+      firstName: request.firstName,
+      middleName: request.middleName,
+      lastName: request.lastName,
+      loginDate: Date(),
+    })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
+})
+
+/**
+ * Delete a student from the database
+ * POST request
+ * email - Email of student to be deleted
+ */
+
+router.post("/delStudent", async (req, res) => {
+  const request = req.body
+
+  const result = await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Attends)
+    .where("email = :email", { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Student)
+    .where("email = :email", { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
+})
+
+/** Delete an admin from the database
+ * POST Request
+ * email - Email of admin to be deleted
+ */
+router.post("/delAdmin", async (req, res) => {
+  const request = req.body
+
+  const result = await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Admin)
+    .where("email = :email", { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send(result)
+})
+
+router.post("/user/events", async (req: Request, res: Response) => {
+  const request = req.body
+  const eventIds = await getConnection()
+    .createQueryBuilder()
+    .select("attends.eventID")
+    .from(Attends, "attends")
+    .where("user.email IN (:...searchemail)", { searchemail: request.email })
+    .getMany()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  return res.send("Point values returned.")
+})
+
+router.post("/resetPoints", async (req, res) => {
+  const request = req.body
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Student)
+    .set({ points: 0 })
+    .where("email = :email", { email: request.email })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send("Reset user points")
+})
+
+router.post("/resetAllPoints", async (req, res) => {
+  const request = req.body
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Student)
+    .set({ points: 0 })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  // Successful return
+  return res.send("Reset all points")
 })
 
 export default router
