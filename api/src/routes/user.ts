@@ -4,7 +4,7 @@ import { getConnection, getRepository, getManager } from "typeorm"
 import { Student } from "../entity/Student"
 import { Admin } from "../entity/Admin"
 import { Attends } from "../entity/Attends"
-import { request } from "http"
+import * as argon2 from "argon2"
 
 const router = Router()
 
@@ -134,26 +134,37 @@ router.get("/sumPoints", async (req, res) => {
 
 /**
  * Login as a student
+ * Normally better to not indicate whether email or password is wrong
+ * but given the use case for this app, better UX is worth the tradeoff
  */
 router.post("/loginStudent", async (req, res) => {
   const request = req.body
+  if (!request.password) return res.status(401).send("Needs a password")
 
   const student =
     (await getConnection()
       .createQueryBuilder()
       .select("student")
       .from(Student, "student")
-      .where("student.email = :email AND student.stuPass = :password", {
+      .where("student.email = :email", {
         email: request.email,
-        password: request.password,
       })
       .getOne()) || null
 
   if (student) {
-    return res.send(student)
-  } else {
-    return res.status(401).send("Wrong email or password. Please try again.")
+    const checkPasswordResult = await argon2.verify(
+      student.stuPass,
+      request.password
+    )
+
+    if (checkPasswordResult) {
+      return res.send(student)
+    } else {
+      return res.status(401).send("Incorrect password.")
+    }
   }
+
+  return res.status(401).send("Wrong password or account doesn't exist.")
 })
 
 /**
@@ -161,36 +172,50 @@ router.post("/loginStudent", async (req, res) => {
  */
 router.post("/loginAdmin", async (req, res) => {
   const request = req.body
+  if (!request.password) return res.status(401).send("Needs a password")
 
   const admin =
     (await getConnection()
       .createQueryBuilder()
       .select("admin")
       .from(Admin, "admin")
-      .where("admin.email = :email AND admin.adminPass = :password", {
+      .where("admin.email = :email", {
         email: request.email,
-        password: request.password,
       })
       .getOne()) || null
 
   if (admin) {
-    return res.send(admin)
+    const checkPasswordResult = await argon2.verify(
+      admin.adminPass,
+      request.password
+    )
+
+    if (checkPasswordResult) {
+      return res.send(admin)
+    } else {
+      return res.status(401).send("Incorrect password.")
+    }
   } else {
     return res.status(401).send("Wrong email or password. Please try again.")
   }
 })
 
+/**
+ * Student account registration
+ */
+// TODO: Add server side validation for passwords
 router.post("/newStudent", async (req, res) => {
   const request = req.body
+  if (!request.stuPass) return res.status(401).send("Needs a password")
+  const hashPass = await argon2.hash(request.stuPass)
 
-  // TODO: Salt and hash user password
   const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Student)
     .values({
       email: request.email,
-      stuPass: request.stuPass,
+      stuPass: hashPass,
       firstName: request.firstName,
       middleName: request.middleName,
       lastName: request.lastName,
@@ -208,17 +233,22 @@ router.post("/newStudent", async (req, res) => {
   return res.send(result)
 })
 
+/**
+ * Create a new admin account
+ */
+// TODO: Add server side validation for passwords
 router.post("/newAdmin", async (req, res) => {
   const request = req.body
+  if (!request.adminPass) return res.status(401).send("Needs a password")
+  const hashPass = await argon2.hash(request.password)
 
-  // TODO: Salt and hash user passwordd
   const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Admin)
     .values({
       email: request.email,
-      adminPass: request.adminPass,
+      adminPass: hashPass,
       firstName: request.firstName,
       middleName: request.middleName,
       lastName: request.lastName,
