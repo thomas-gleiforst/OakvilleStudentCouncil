@@ -1,14 +1,13 @@
 import { Column, Entity, PrimaryColumn, CreateDateColumn } from "typeorm"
 
-// TODO: Set column types of necessary (default in varchar255 or int)
-// TODO: Should loginDate() column be type @UpdateDateColumn?
 @Entity()
 export class Admin {
 
   @PrimaryColumn("varchar", {length: 80})
   email!: string;
 
-  @Column("varchar", {length: 1024})
+  // TypeORM hidden field so we get the password field only if needed
+  @Column("varchar", {length: 1024, select: false})
   adminPass!: string;
 
   @Column("varchar", {length: 80})

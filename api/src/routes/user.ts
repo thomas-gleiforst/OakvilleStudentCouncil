@@ -137,6 +137,7 @@ router.get("/sumPoints", async (req, res) => {
  * Normally better to not indicate whether email or password is wrong
  * but given the use case for this app, better UX is worth the tradeoff
  */
+// TODO: Add login date timestamp
 router.post("/loginStudent", async (req, res) => {
   const request = req.body
   if (!request.password) return res.status(401).send("Needs a password")
@@ -145,6 +146,7 @@ router.post("/loginStudent", async (req, res) => {
     (await getConnection()
       .createQueryBuilder()
       .select("student")
+      .addSelect("student.stuPass")
       .from(Student, "student")
       .where("student.email = :email", {
         email: request.email,
@@ -158,18 +160,20 @@ router.post("/loginStudent", async (req, res) => {
     )
 
     if (checkPasswordResult) {
+      delete student["stuPass"]
       return res.send(student)
     } else {
       return res.status(401).send("Incorrect password.")
     }
   }
 
-  return res.status(401).send("Wrong password or account doesn't exist.")
+  return res.status(401).send("Wrong email/password or account doesn't exist.")
 })
 
 /**
  * Login as an admin
  */
+// TODO: Add login date timestamp
 router.post("/loginAdmin", async (req, res) => {
   const request = req.body
   if (!request.password) return res.status(401).send("Needs a password")
@@ -178,6 +182,7 @@ router.post("/loginAdmin", async (req, res) => {
     (await getConnection()
       .createQueryBuilder()
       .select("admin")
+      .addSelect("admin.adminPass")
       .from(Admin, "admin")
       .where("admin.email = :email", {
         email: request.email,
@@ -191,12 +196,15 @@ router.post("/loginAdmin", async (req, res) => {
     )
 
     if (checkPasswordResult) {
+      delete admin["adminPass"]
       return res.send(admin)
     } else {
       return res.status(401).send("Incorrect password.")
     }
   } else {
-    return res.status(401).send("Wrong email or password. Please try again.")
+    return res
+      .status(401)
+      .send("Wrong email/password or account doesn't exist.")
   }
 })
 
@@ -229,7 +237,8 @@ router.post("/newStudent", async (req, res) => {
       return res.send(error)
     })
 
-  // Successful return
+  // TODO: Return JWT along with basic student information
+  delete result["stuPass"]
   return res.send(result)
 })
 
@@ -240,7 +249,7 @@ router.post("/newStudent", async (req, res) => {
 router.post("/newAdmin", async (req, res) => {
   const request = req.body
   if (!request.adminPass) return res.status(401).send("Needs a password")
-  const hashPass = await argon2.hash(request.password)
+  const hashPass = await argon2.hash(request.adminPass)
 
   const result = await getConnection()
     .createQueryBuilder()
@@ -260,7 +269,8 @@ router.post("/newAdmin", async (req, res) => {
       return res.send(error)
     })
 
-  // Successful return
+  // TODO: Return JWT along with basic student information
+  delete result["adminPass"]
   return res.send(result)
 })
 
