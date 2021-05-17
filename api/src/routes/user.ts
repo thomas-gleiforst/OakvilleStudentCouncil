@@ -356,18 +356,19 @@ router.post("/delAdmin", async (req, res) => {
  */
 router.post("/user/events", async (req: Request, res: Response) => {
   const request = req.body
-  const eventIds = await getConnection()
+  const events = await getConnection()
     .createQueryBuilder()
-    .select("attends.eventID")
+    // .select("attends.eventID")
+    .select("attends")
     .from(Attends, "attends")
-    .where("user.email IN (:...searchemail)", { searchemail: request.email })
-    .getMany()
+    .where("attends.email = :searchemail", { searchemail: request.email })
+    .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
 
-  return res.send("Point values returned.")
+  return res.send(events)
 })
 
 // Reset the points of a student to 0

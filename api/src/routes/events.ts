@@ -121,9 +121,6 @@ router.post('/eventDetails', async (req: Request, res: Response) => {
  * eventID
  * eventDesc - updated details for event
  */
-// TODO: Return new event details
-// TODO: Can you update certain attributes and leave others the same?
-// FIXME: Use repository method in order to do partial updates
 router.post('/events/updateDesc', async (req: Request, res: Response) => {
   const request = req.body
 
@@ -132,6 +129,7 @@ router.post('/events/updateDesc', async (req: Request, res: Response) => {
     .update(Event)
     .set({ event_desc: request.eventDesc })
     .where('eventID = :eventID', { eventID: request.eventID })
+    .returning(['eventID', 'eventName', 'event_desc'])
     .execute()
     .catch((error) => {
       console.log(error)
@@ -171,7 +169,7 @@ router.post('/events/updateName', async (req: Request, res: Response) => {
  */
 
 //Returns all attendees of the event
-// FIXME: Nicer output
+// TODO: Nicer output
 router.post('/events/viewAttendees', async (req: Request, res: Response) => {
   const request = req.body
 
