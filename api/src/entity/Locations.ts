@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm'
+import { Column, Entity, OneToOne, JoinColumn } from 'typeorm'
 import { Event } from './Event'
 
 @Entity()

@@ -1,6 +1,4 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, } from 'typeorm'
-
-import { Attends } from './Attends'
 import { EventDate } from './EventDate'
 
 @Entity()
