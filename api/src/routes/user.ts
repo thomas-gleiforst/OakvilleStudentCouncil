@@ -97,6 +97,11 @@ router.post("/updatePoints", async (req, res) => {
   const student = await studentRepository.findOne({
     where: { email: request.email },
   })
+
+  if (!student) {
+    return res.status(404).send("Student not found!")
+  }
+
   const newPoints: number = student.points + request.pointUpdate
   student.points = newPoints
   await studentRepository.save(student)
@@ -117,6 +122,11 @@ router.post("/updatePoints", async (req, res) => {
   const student = await studentRepository.findOne({
     where: { email: request.email },
   })
+
+  if (!student) {
+    return res.status(404).send("Student not found!")
+  }
+
   const newPoints: number = student.points + request.pointUpdate
   student.points = newPoints
   await studentRepository.save(student)
@@ -180,8 +190,17 @@ router.post("/loginStudent", async (req, res) => {
     )
 
     if (checkPasswordResult) {
-      delete student["stuPass"]
-      return res.send(student)
+      const returnStudent = {
+        email: student.email,
+        id: student.id,
+        firstName: student.firstName,
+        middleName: student.middleName,
+        lastName: student.lastName,
+        loginDate: student.loginDate,
+        joinDate: student.joinDate,
+        points: student.points,
+      }
+      return res.send(returnStudent)
     } else {
       return res.status(401).send("Incorrect password.")
     }
@@ -216,8 +235,15 @@ router.post("/loginAdmin", async (req, res) => {
     )
 
     if (checkPasswordResult) {
-      delete admin["adminPass"]
-      return res.send(admin)
+      const returnAdmin = {
+        email: admin.email,
+        firstName: admin.firstName,
+        middleName: admin.middleName,
+        lastName: admin.lastName,
+        loginDate: admin.loginDate,
+        joinDate: admin.joinDate,
+      }
+      return res.send(returnAdmin)
     } else {
       return res.status(401).send("Incorrect password.")
     }
