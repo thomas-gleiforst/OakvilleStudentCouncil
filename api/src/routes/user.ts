@@ -184,26 +184,19 @@ router.post("/loginStudent", async (req, res) => {
       .getOne()) || null
 
   if (student) {
-    const checkPasswordResult = await argon2.verify(
-      student.stuPass,
-      request.password
-    )
-
-    if (checkPasswordResult) {
-      const returnStudent = {
-        email: student.email,
-        id: student.id,
-        firstName: student.firstName,
-        middleName: student.middleName,
-        lastName: student.lastName,
-        loginDate: student.loginDate,
-        joinDate: student.joinDate,
-        points: student.points,
-      }
-      return res.send(returnStudent)
-    } else {
-      return res.status(401).send("Incorrect password.")
+    const returnStudent = {
+      email: student.email,
+      id: student.id,
+      firstName: student.firstName,
+      middleName: student.middleName,
+      lastName: student.lastName,
+      loginDate: student.loginDate,
+      joinDate: student.joinDate,
+      points: student.points,
     }
+    return res.send(returnStudent)
+  } else {
+    return res.status(401).send("Incorrect password.")
   }
 
   return res.status(401).send("Wrong email/password or account doesn't exist.")
@@ -269,7 +262,6 @@ router.post("/newStudent", async (req, res) => {
     .into(Student)
     .values({
       email: request.email,
-      stuPass: hashPass,
       firstName: request.firstName,
       middleName: request.middleName,
       lastName: request.lastName,
@@ -284,7 +276,6 @@ router.post("/newStudent", async (req, res) => {
     })
 
   // TODO: Return JWT along with basic student information
-  delete result["stuPass"]
   return res.send(result)
 })
 
@@ -316,7 +307,6 @@ router.post("/newAdmin", async (req, res) => {
     })
 
   // TODO: Return JWT along with basic student information
-  delete result["adminPass"]
   return res.send(result)
 })
 

@@ -8,8 +8,8 @@ import { EventDate } from '../entity/EventDate'
  * @param event - Event typeorm entity
  * @param dates - Formatted date strings
  */
-// TODO: Error catching
-const insertEventDates = async (event, dates) => {
+// TODO: Figure out how we wanna store dates
+const insertEventDates = async (event: Event, dates: any) => {
   const eventDateRepository = getConnection().getRepository(EventDate)    
 
   for (const date of dates) {

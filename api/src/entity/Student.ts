@@ -1,34 +1,28 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryColumn,
-} from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm"
 
 @Entity()
 export class Student {
-  @PrimaryColumn('varchar', { length: 80 })
+  @PrimaryColumn("varchar", { length: 80 })
   email!: string
 
-  // TypeORM hidden field so we get the password field only if needed
-  @Column('varchar', { length: 1024, select: false })
-  stuPass!: string
+  @Column("varchar", { unique: true })
+  id!: string
 
-  @Column('varchar', { length: 80 })
+  @Column("varchar", { length: 80 })
   firstName!: string
 
-  @Column('varchar', { length: 80, nullable: true })
-  middleName!: string
+  @Column({ type: "varchar", length: 80, nullable: true })
+  middleName!: string | null
 
-  @Column('varchar', { length: 80 })
+  @Column("varchar", { length: 80 })
   lastName!: string
 
-  @Column('timestamp')
+  @Column("timestamp")
   loginDate!: Date
 
   @CreateDateColumn()
   joinDate!: Date
 
-  @Column('smallint')
+  @Column("smallint")
   points!: number
 }

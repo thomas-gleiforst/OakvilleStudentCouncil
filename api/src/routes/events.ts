@@ -30,7 +30,7 @@ router.post('/createEvent', async (req, res) => {
 
   const event = new Event()
   event.eventName = request.eventName
-  event.event_desc = request.event_desc
+  event.eventDesc = request.event_desc
   await eventRepository.save(event)
   // Grab the ID of a newly created date
   const newEventID: string = event.eventID
@@ -95,7 +95,6 @@ router.get('/events', async (req: Request, res: Response) => {
  * Requires these values in the request
  * eventID
  */
-//TODO: Test
 // TODO: Return more event details
 router.post('/eventDetails', async (req: Request, res: Response) => {
   const request = req.body
@@ -127,7 +126,7 @@ router.post('/events/updateDesc', async (req: Request, res: Response) => {
   const event = await getConnection()
     .createQueryBuilder()
     .update(Event)
-    .set({ event_desc: request.eventDesc })
+    .set({ eventDesc: request.eventDesc })
     .where('eventID = :eventID', { eventID: request.eventID })
     .returning(['eventID', 'eventName', 'event_desc'])
     .execute()

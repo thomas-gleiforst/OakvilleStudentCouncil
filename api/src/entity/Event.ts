@@ -10,8 +10,8 @@ export class Event {
   eventName!: string
 
   @Column('varchar', { length: 2048, nullable: true })
-  event_desc!: string
+  eventDesc!: string
 
   @OneToMany(() => EventDate, eventDate => eventDate.event)
-  eventDate: EventDate[]
+  eventDate!: EventDate[]
 }

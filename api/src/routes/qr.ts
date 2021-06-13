@@ -54,10 +54,19 @@ router.post("/markAttended", async (req: Request, res: Response) => {
     where: { email: request.email },
   })
 
+  if (!student) {
+    return res.status(404).send("User doesn't exist, can't mark as attended!")
+  }
+
   // Find QR entry for specified event and add that to the student's points
   const QR = await qrRespository.findOne({
     where: { eventID: request.eventID },
   })
+
+  if (!QR) {
+    return res.status(404).send("QR code not found!")
+  }
+
   const newPoints: number = student.points + QR.pointValue
   student.points = newPoints
   await studentRepository.save(student)
