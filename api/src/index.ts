@@ -15,7 +15,6 @@ createConnection().then((connection) => {
   app.use(cors())
   app.use(express.json()) // Expect a JSON response
 
-  // TODO: JWT for persistent auth
   app.use(passport.initialize())
 
   // Routes

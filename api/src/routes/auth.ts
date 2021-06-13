@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express"
+import { Router, Request, Response, response } from "express"
 import passport from "passport"
 
 const router = Router()
@@ -10,7 +10,11 @@ router.get(
   })
 )
 
-router.get("/auth/google/redirect", passport.authenticate("google"))
+router.get(
+  "/auth/google/redirect",
+  passport.authenticate("google", { session: false }),
+  (_, res: Response) => res.send("Authenticated!")
+)
 
 router.get("/auth/logout", (req: Request, res: Response) => {
   req.logout()

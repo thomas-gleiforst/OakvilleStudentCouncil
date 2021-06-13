@@ -1,12 +1,13 @@
 import dotenv from "dotenv"
 import passport from "passport"
 import { Strategy } from "passport-google-oauth20"
-import { getConnection } from "typeorm"
+import { getManager } from "typeorm"
 
 import { Student } from "../entity/Student"
 
 dotenv.config()
 
+// TODO: Time for JWT!
 passport.use(
   new Strategy(
     {
@@ -14,32 +15,24 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       callbackURL: "/auth/google/redirect",
     },
-    async (accessToken, refreshToken, profile, cb) => {
-      const user = await getConnection()
-        .createQueryBuilder()
-        .select("student")
-        .from(Student, "student")
-        .where("student.id = :profileID", { profileID: profile.id })
-        .getOne()
+    async (_, __, profile, cb) => {
+      const manager = getManager()
+      const user = await manager.findOne(Student, { id: profile.id })
 
       if (user) {
         cb(null, user)
       } else {
-        // TODO: Create new user
-        // const newUser = connection
-        //   .createQueryBuilder()
-        //   .insert()
-        //   .into(Student)
-        //   .values({
-        //     email: profile.emails.,
-        //     id: profile.id,
-        //     firstName: profile.,
-        //     middleName: profile.middleName,
-        //     lastName: profile.familyName,
-        //     loginDate: Date.now(),
-        //     points: 0,
-        //   })
-        cb(null, false)
+        const newUser = manager.create(Student, {
+          email: profile.emails && profile.emails[0].value,
+          id: profile.id,
+          firstName: profile.name && profile.name.givenName,
+          middleName: profile.name && profile.name.middleName,
+          lastName: profile.name && profile.name.familyName,
+          loginDate: new Date(Date.now()).toISOString(),
+          points: 0,
+        })
+        const savedStudent = await manager.save(newUser)
+        cb(null, savedStudent)
       }
     }
   )
