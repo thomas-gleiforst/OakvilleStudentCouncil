@@ -30,7 +30,7 @@ router.post('/createEvent', async (req, res) => {
 
   const event = new Event()
   event.eventName = request.eventName
-  event.event_desc = request.event_desc
+  event.eventDesc = request.event_desc
   await eventRepository.save(event)
   // Grab the ID of a newly created date
   const newEventID: string = event.eventID
@@ -95,7 +95,6 @@ router.get('/events', async (req: Request, res: Response) => {
  * Requires these values in the request
  * eventID
  */
-//TODO: Test
 // TODO: Return more event details
 router.post('/eventDetails', async (req: Request, res: Response) => {
   const request = req.body
@@ -121,17 +120,15 @@ router.post('/eventDetails', async (req: Request, res: Response) => {
  * eventID
  * eventDesc - updated details for event
  */
-// TODO: Return new event details
-// TODO: Can you update certain attributes and leave others the same?
-// FIXME: Use repository method in order to do partial updates
 router.post('/events/updateDesc', async (req: Request, res: Response) => {
   const request = req.body
 
   const event = await getConnection()
     .createQueryBuilder()
     .update(Event)
-    .set({ event_desc: request.eventDesc })
+    .set({ eventDesc: request.eventDesc })
     .where('eventID = :eventID', { eventID: request.eventID })
+    .returning(['eventID', 'eventName', 'event_desc'])
     .execute()
     .catch((error) => {
       console.log(error)
@@ -171,7 +168,7 @@ router.post('/events/updateName', async (req: Request, res: Response) => {
  */
 
 //Returns all attendees of the event
-// FIXME: Nicer output
+// TODO: Nicer output
 router.post('/events/viewAttendees', async (req: Request, res: Response) => {
   const request = req.body
 

@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne } from 'typeorm'
+import { Entity, ManyToOne } from 'typeorm'
 import { Event } from './Event'
 import { Student } from './Student'
 

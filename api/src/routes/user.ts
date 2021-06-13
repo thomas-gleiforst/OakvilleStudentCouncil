@@ -4,6 +4,7 @@ import { getConnection, getRepository, getManager } from "typeorm"
 import { Student } from "../entity/Student"
 import { Admin } from "../entity/Admin"
 import { Attends } from "../entity/Attends"
+import * as argon2 from "argon2"
 
 const router = Router()
 
@@ -24,9 +25,7 @@ router.get("/allAdmins", async (req: Request, res: Response) => {
 })
 
 /**
- * Returns a student object with all values
- * Requires these values in the request
- * email
+ * Get an existing student with email
  */
 router.post("/student", async (req, res) => {
   const request = req.body
@@ -46,9 +45,7 @@ router.post("/student", async (req, res) => {
 })
 
 /**
- * Returns a admin object with all values
- * Requires these values in the request
- * email
+ * Get an existing admin with email
  */
 router.post("/admin", async (req, res) => {
   const request = req.body
@@ -100,6 +97,36 @@ router.post("/updatePoints", async (req, res) => {
   const student = await studentRepository.findOne({
     where: { email: request.email },
   })
+
+  if (!student) {
+    return res.status(404).send("Student not found!")
+  }
+
+  const newPoints: number = student.points + request.pointUpdate
+  student.points = newPoints
+  await studentRepository.save(student)
+
+  // Successful return
+  return res.send(student)
+})
+
+/**
+ * Updates student points
+ * Requires these values in the request
+ * email
+ * pointUpdate
+ */
+router.post("/updatePoints", async (req, res) => {
+  const request = req.body
+  const studentRepository = getRepository(Student)
+  const student = await studentRepository.findOne({
+    where: { email: request.email },
+  })
+
+  if (!student) {
+    return res.status(404).send("Student not found!")
+  }
+
   const newPoints: number = student.points + request.pointUpdate
   student.points = newPoints
   await studentRepository.save(student)
@@ -135,68 +162,106 @@ router.get("/sumPoints", async (req, res) => {
   return res.send(rawData)
 }) // Successful return
 
-/*
- * password - Student password
+/**
+ * Login as a student
+ * Normally better to not indicate whether email or password is wrong
+ * but given the use case for this app, better UX is worth the tradeoff
  */
+// TODO: Add login date timestamp
 router.post("/loginStudent", async (req, res) => {
   const request = req.body
+  if (!request.password) return res.status(401).send("Needs a password")
 
   const student =
     (await getConnection()
       .createQueryBuilder()
       .select("student")
+      .addSelect("student.stuPass")
       .from(Student, "student")
-      .where("student.email = :email AND student.stuPass = :password", {
+      .where("student.email = :email", {
         email: request.email,
-        password: request.password,
       })
       .getOne()) || null
 
   if (student) {
-    return res.send(student)
+    const returnStudent = {
+      email: student.email,
+      id: student.id,
+      firstName: student.firstName,
+      middleName: student.middleName,
+      lastName: student.lastName,
+      loginDate: student.loginDate,
+      joinDate: student.joinDate,
+      points: student.points,
+    }
+    return res.send(returnStudent)
   } else {
-    return res.status(401).send("Wrong email or password. Please try again.")
+    return res.status(401).send("Incorrect password.")
   }
+
+  return res.status(401).send("Wrong email/password or account doesn't exist.")
 })
 
 /**
- * Login the student to get student details
- * POST Request
- * email - Email of student
- * password - Student password
+ * Login as an admin
  */
+// TODO: Add login date timestamp
 router.post("/loginAdmin", async (req, res) => {
   const request = req.body
+  if (!request.password) return res.status(401).send("Needs a password")
 
   const admin =
     (await getConnection()
       .createQueryBuilder()
       .select("admin")
+      .addSelect("admin.adminPass")
       .from(Admin, "admin")
-      .where("admin.email = :email AND admin.adminPass = :password", {
+      .where("admin.email = :email", {
         email: request.email,
-        password: request.password,
       })
       .getOne()) || null
 
   if (admin) {
-    return res.send(admin)
+    const checkPasswordResult = await argon2.verify(
+      admin.adminPass,
+      request.password
+    )
+
+    if (checkPasswordResult) {
+      const returnAdmin = {
+        email: admin.email,
+        firstName: admin.firstName,
+        middleName: admin.middleName,
+        lastName: admin.lastName,
+        loginDate: admin.loginDate,
+        joinDate: admin.joinDate,
+      }
+      return res.send(returnAdmin)
+    } else {
+      return res.status(401).send("Incorrect password.")
+    }
   } else {
-    return res.status(401).send("Wrong email or password. Please try again.")
+    return res
+      .status(401)
+      .send("Wrong email/password or account doesn't exist.")
   }
 })
 
+/**
+ * Student account registration
+ */
+// TODO: Add server side validation for passwords
 router.post("/newStudent", async (req, res) => {
   const request = req.body
+  if (!request.stuPass) return res.status(401).send("Needs a password")
+  const hashPass = await argon2.hash(request.stuPass)
 
-  // TODO: Salt and hash user password
   const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Student)
     .values({
       email: request.email,
-      stuPass: request.stuPass,
       firstName: request.firstName,
       middleName: request.middleName,
       lastName: request.lastName,
@@ -210,21 +275,26 @@ router.post("/newStudent", async (req, res) => {
       return res.send(error)
     })
 
-  // Successful return
+  // TODO: Return JWT along with basic student information
   return res.send(result)
 })
 
+/**
+ * Create a new admin account
+ */
+// TODO: Add server side validation for passwords
 router.post("/newAdmin", async (req, res) => {
   const request = req.body
+  if (!request.adminPass) return res.status(401).send("Needs a password")
+  const hashPass = await argon2.hash(request.adminPass)
 
-  // TODO: Salt and hash user passwordd
   const result = await getConnection()
     .createQueryBuilder()
     .insert()
     .into(Admin)
     .values({
       email: request.email,
-      adminPass: request.adminPass,
+      adminPass: hashPass,
       firstName: request.firstName,
       middleName: request.middleName,
       lastName: request.lastName,
@@ -236,7 +306,7 @@ router.post("/newAdmin", async (req, res) => {
       return res.send(error)
     })
 
-  // Successful return
+  // TODO: Return JWT along with basic student information
   return res.send(result)
 })
 
@@ -297,22 +367,27 @@ router.post("/delAdmin", async (req, res) => {
   return res.send(result)
 })
 
+/**
+ * Gets all events that a student went to
+ */
 router.post("/user/events", async (req: Request, res: Response) => {
   const request = req.body
-  const eventIds = await getConnection()
+  const events = await getConnection()
     .createQueryBuilder()
-    .select("attends.eventID")
+    // .select("attends.eventID")
+    .select("attends")
     .from(Attends, "attends")
-    .where("user.email IN (:...searchemail)", { searchemail: request.email })
-    .getMany()
+    .where("attends.email = :searchemail", { searchemail: request.email })
+    .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
 
-  return res.send("Point values returned.")
+  return res.send(events)
 })
 
+// Reset the points of a student to 0
 router.post("/resetPoints", async (req, res) => {
   const request = req.body
 
@@ -331,6 +406,7 @@ router.post("/resetPoints", async (req, res) => {
   return res.send("Reset user points")
 })
 
+// Reset everyone's points
 router.post("/resetAllPoints", async (req, res) => {
   const request = req.body
 

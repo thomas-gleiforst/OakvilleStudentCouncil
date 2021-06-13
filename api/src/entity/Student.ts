@@ -1,37 +1,28 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryColumn,
-} from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm"
 
-
-// TODO: Set column types of necessary (default in varchar255 or int)
-// TODO: Should loginDate() column be type @UpdateDateColumn?
 @Entity()
 export class Student {
-  @PrimaryColumn('varchar', { length: 80 })
+  @PrimaryColumn("varchar", { length: 80 })
   email!: string
 
-  @Column('varchar', { length: 1024 })
-  stuPass!: string
+  @Column("varchar", { unique: true })
+  id!: string
 
-  @Column('varchar', { length: 80 })
+  @Column("varchar", { length: 80 })
   firstName!: string
 
-  @Column('varchar', { length: 80, nullable: true })
-  middleName!: string
+  @Column({ type: "varchar", length: 80, nullable: true })
+  middleName!: string | null
 
-  @Column('varchar', { length: 80 })
+  @Column("varchar", { length: 80 })
   lastName!: string
 
-  @Column('timestamp')
+  @Column("timestamp")
   loginDate!: Date
 
   @CreateDateColumn()
   joinDate!: Date
 
-  @Column('smallint')
+  @Column("smallint")
   points!: number
 }

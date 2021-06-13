@@ -1,11 +1,11 @@
-import { Router, Request, Response } from 'express'
-import { getConnection, getRepository } from 'typeorm'
+import { Router, Request, Response } from "express"
+import { getConnection, getRepository } from "typeorm"
 
-import { Event } from '../entity/Event'
-import { Attends } from '../entity/Attends'
-import { Locations } from '../entity/Locations'
-import { QRCodes } from '../entity/QRCodes'
-import { Student } from '../entity/Student'
+import { Event } from "../entity/Event"
+import { Attends } from "../entity/Attends"
+import { Locations } from "../entity/Locations"
+import { QRCodes } from "../entity/QRCodes"
+import { Student } from "../entity/Student"
 
 const router = Router()
 
@@ -15,8 +15,22 @@ const router = Router()
  * email
  * eventID
  */
-router.post('/markAttended', async (req: Request, res: Response) => {
+router.post("/markAttended", async (req: Request, res: Response) => {
   const request = req.body
+
+  // See if user already attended event
+  const attendedEvent = await getConnection()
+    .createQueryBuilder()
+    .select("attends")
+    .from(Attends, "attends")
+    .where("attends.email = :email", {
+      email: request.email,
+    })
+    .execute()
+
+  if (attendedEvent !== null) {
+    return res.send("Student already attended this event!")
+  }
 
   // Insert into attended table
   await getConnection()
@@ -39,15 +53,25 @@ router.post('/markAttended', async (req: Request, res: Response) => {
   const student = await studentRepository.findOne({
     where: { email: request.email },
   })
+
+  if (!student) {
+    return res.status(404).send("User doesn't exist, can't mark as attended!")
+  }
+
   // Find QR entry for specified event and add that to the student's points
   const QR = await qrRespository.findOne({
     where: { eventID: request.eventID },
   })
+
+  if (!QR) {
+    return res.status(404).send("QR code not found!")
+  }
+
   const newPoints: number = student.points + QR.pointValue
   student.points = newPoints
   await studentRepository.save(student)
 
-  return res.send(student)
+  return res.send("Student's attendance recorded")
 })
 
 /**
@@ -55,14 +79,14 @@ router.post('/markAttended', async (req: Request, res: Response) => {
  * POST Request
  * eventId
  */
-router.post('/viewBarcode', async (req: Request, res: Response) => {
+router.post("/viewBarcode", async (req: Request, res: Response) => {
   const request = req.body
 
   const viewQRCode = await getConnection()
     .createQueryBuilder()
-    .select('qrcodes')
-    .from(QRCodes, 'qrcodes')
-    .where('qrcodes.eventID = :eventID', { eventID: request.eventID })
+    .select("qrcodes")
+    .from(QRCodes, "qrcodes")
+    .where("qrcodes.eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -72,15 +96,14 @@ router.post('/viewBarcode', async (req: Request, res: Response) => {
   return res.send(viewQRCode)
 })
 
-// No need for this yet
-router.post('/viewLocations', async (req: Request, res: Response) => {
+router.post("/viewLocations", async (req: Request, res: Response) => {
   const request = req.body
 
   const location = await getConnection()
     .createQueryBuilder()
-    .select('locations')
-    .from(Locations, 'locations')
-    .where('locations.eventIDeventId = :eventID', { eventID: request.eventID })
+    .select("locations")
+    .from(Locations, "locations")
+    .where("locations.eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
