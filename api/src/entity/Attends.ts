@@ -1,13 +1,13 @@
 import { Entity, ManyToOne } from 'typeorm'
 import { Event } from './Event'
-import { Student } from './Student'
+import { User } from './User'
 
 @Entity()
 export class Attends {
-  @ManyToOne(() => Student, (student: Student) => student.email, {
+  @ManyToOne(() => User, (user: User) => user.id, {
     primary: true,
   })
-  email!: Student
+  id!: User 
 
   @ManyToOne(() => Event, (event: Event) => event.eventID, {
     primary: true

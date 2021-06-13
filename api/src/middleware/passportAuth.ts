@@ -3,7 +3,7 @@ import passport from "passport"
 import { Strategy } from "passport-google-oauth20"
 import { getManager } from "typeorm"
 
-import { Student } from "../entity/Student"
+import { User } from "../entity/User"
 
 dotenv.config()
 
@@ -17,12 +17,12 @@ passport.use(
     },
     async (_, __, profile, cb) => {
       const manager = getManager()
-      const user = await manager.findOne(Student, { id: profile.id })
+      const user = await manager.findOne(User, { id: profile.id })
 
       if (user) {
         cb(null, user)
       } else {
-        const newUser = manager.create(Student, {
+        const newUser = manager.create(User, {
           email: profile.emails && profile.emails[0].value,
           id: profile.id,
           firstName: profile.name && profile.name.givenName,
@@ -30,6 +30,7 @@ passport.use(
           lastName: profile.name && profile.name.familyName,
           loginDate: new Date(Date.now()).toISOString(),
           points: 0,
+          role: "student",
         })
         const savedStudent = await manager.save(newUser)
         cb(null, savedStudent)

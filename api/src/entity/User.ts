@@ -1,20 +1,20 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn } from "typeorm"
 
 @Entity()
-export class Student {
-  @PrimaryColumn("varchar", { length: 80 })
-  email!: string
-
-  @Column("varchar", { unique: true })
+export class User {
+  @PrimaryColumn()
   id!: string
 
-  @Column("varchar", { length: 80 })
+  @Column({ type: "text", unique: true })
+  email!: string
+
+  @Column({ type: "text" })
   firstName!: string
 
-  @Column({ type: "varchar", length: 80, nullable: true })
+  @Column({ type: "text", nullable: true })
   middleName!: string | null
 
-  @Column("varchar", { length: 80 })
+  @Column({ type: "text" })
   lastName!: string
 
   @Column("timestamp")
@@ -25,4 +25,7 @@ export class Student {
 
   @Column("smallint")
   points!: number
+
+  @Column({ type: "text" })
+  role!: string
 }

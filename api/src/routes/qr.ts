@@ -5,7 +5,7 @@ import { Event } from "../entity/Event"
 import { Attends } from "../entity/Attends"
 import { Locations } from "../entity/Locations"
 import { QRCodes } from "../entity/QRCodes"
-import { Student } from "../entity/Student"
+import { User } from "../entity/User"
 
 const router = Router()
 
@@ -38,7 +38,7 @@ router.post("/markAttended", async (req: Request, res: Response) => {
     .insert()
     .into(Attends)
     .values({
-      email: request.email,
+      id: request.userID,
       eventID: request.eventID,
     })
     .execute()
@@ -48,13 +48,13 @@ router.post("/markAttended", async (req: Request, res: Response) => {
     })
 
   // Update student's points for attending the event
-  const studentRepository = getRepository(Student)
+  const userRepository = getRepository(User)
   const qrRespository = getRepository(QRCodes)
-  const student = await studentRepository.findOne({
-    where: { email: request.email },
+  const user = await userRepository.findOne({
+    where: { id: request.userID },
   })
 
-  if (!student) {
+  if (!user) {
     return res.status(404).send("User doesn't exist, can't mark as attended!")
   }
 
@@ -67,9 +67,9 @@ router.post("/markAttended", async (req: Request, res: Response) => {
     return res.status(404).send("QR code not found!")
   }
 
-  const newPoints: number = student.points + QR.pointValue
-  student.points = newPoints
-  await studentRepository.save(student)
+  const newPoints: number = user.points + QR.pointValue
+  user.points = newPoints
+  await userRepository.save(user)
 
   return res.send("Student's attendance recorded")
 })
