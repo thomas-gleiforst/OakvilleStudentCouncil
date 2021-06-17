@@ -4,7 +4,6 @@ import { getConnection, getRepository } from "typeorm"
 import { Event } from "../entity/Event"
 import { Attends } from "../entity/Attends"
 import { EventDate } from "../entity/EventDate"
-import { Locations } from "../entity/Locations"
 import { QRCodes } from "../entity/QRCodes"
 
 import { insertEventDates } from "../utils/insertEventDates"
@@ -13,11 +12,11 @@ const router = Router()
 
 /**
  * Creates events
- * Requires these values in the request
- * eventName
- * event_desc - event description
- * eventDates - Array of event dates formatted as (Date.toString())
- * locationName
+ * 
+ * JSON body for request
+ * name
+ * description
+ * date - Array of Javascript formatted dates
  * address
  * room
  * points
@@ -28,15 +27,17 @@ router.post("/event", async (req, res) => {
   const eventRepository = getRepository(Event)
 
   const event = new Event()
-  event.eventName = request.eventName
-  event.eventDesc = request.event_desc
+  event.name = request.name
+  event.description = request.description
   await eventRepository.save(event)
-  // Grab the ID of a newly created date
-  const newEventID: string = event.eventID
 
   //Sets date and eventID into Event_Dates table
   try {
-    await insertEventDates(event, request.eventDates)
+    const locationDetails = {
+      address: request.address,
+      room: request.room
+    }
+    await insertEventDates(event, request.eventDates, locationDetails)
   } catch (error) {
     res.status(500).send(error)
   }
@@ -44,25 +45,9 @@ router.post("/event", async (req, res) => {
   await getConnection()
     .createQueryBuilder()
     .insert()
-    .into(Locations)
-    .values({
-      eventID: newEventID,
-      name: request.locationName,
-      address: request.address,
-      room: request.room,
-    })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
-
-  await getConnection()
-    .createQueryBuilder()
-    .insert()
     .into(QRCodes)
     .values({
-      eventID: newEventID,
+      event: event,
       pointValue: request.points,
     })
     .execute()
@@ -72,7 +57,7 @@ router.post("/event", async (req, res) => {
     })
 
   // Successful return
-  return res.send(newEventID)
+  return res.send(event.id)
 })
 
 /**
@@ -136,7 +121,7 @@ router.put("/event/update", async (req: Request, res: Response) => {
   const event = await getConnection()
     .createQueryBuilder()
     .update(Event)
-    .set({ eventDesc: request.eventDesc })
+    .set({ description: request.eventDesc })
     .where("eventID = :eventID", { eventID: request.eventID })
     .returning(["eventID", "eventName", "event_desc"])
     .execute()
@@ -160,7 +145,7 @@ router.put("/event/update", async (req: Request, res: Response) => {
   await getConnection()
     .createQueryBuilder()
     .update(Event)
-    .set({ eventName: request.eventName })
+    .set({ name: request.eventName })
     .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
@@ -200,31 +185,12 @@ router.post(
   }
 )
 
-router.post(
-  "/event/:eventID/locations",
-  async (req: Request, res: Response) => {
-    const request = req.params
-
-    const location = await getConnection()
-      .createQueryBuilder()
-      .select("locations")
-      .from(Locations, "locations")
-      .where("locations.eventID = :eventID", { eventID: request.eventID })
-      .execute()
-      .catch((error) => {
-        console.log(error)
-        return res.send(error)
-      })
-
-    return res.send(location)
-  }
-)
-
 /**
  * Deletes event from the database
  * POST Request
  * eventID
  */
+// TODO: See if you can cascade delete automatically without manual deletion
 router.delete("/event/delete", async (req: Request, res: Response) => {
   const request = req.body
 
@@ -250,17 +216,6 @@ router.delete("/event/delete", async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(QRCodes)
-    .where("eventID = :eventID", { eventID: request.eventID })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
-
-  await getConnection()
-    .createQueryBuilder()
-    .delete()
-    .from(Locations)
     .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {

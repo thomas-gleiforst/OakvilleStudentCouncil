@@ -9,7 +9,7 @@ export class Attends {
   })
   id!: User 
 
-  @ManyToOne(() => Event, (event: Event) => event.eventID, {
+  @ManyToOne(() => Event, (event: Event) => event.id, {
     primary: true
   })
   eventID!: string

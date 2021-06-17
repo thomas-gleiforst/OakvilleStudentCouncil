@@ -1,17 +1,24 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, } from 'typeorm'
-import { EventDate } from './EventDate'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm"
+
+import { EventDate } from "./EventDate"
 
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn("uuid")
-  eventID!: string
+  id!: string
 
-  @Column('varchar', { length: 80 })
-  eventName!: string
+  @Column({ type: "text", length: 80 })
+  name!: string
 
-  @Column('varchar', { length: 2048, nullable: true })
-  eventDesc!: string
+  @Column({ type: "text", length: 2048, nullable: true })
+  description!: string
 
-  @OneToMany(() => EventDate, eventDate => eventDate.event)
-  eventDate!: EventDate[]
+  @OneToMany(() => EventDate, (eventDate) => eventDate.event)
+  dates!: EventDate[]
 }

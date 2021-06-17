@@ -8,5 +8,5 @@ export class QRCodes {
 
   @OneToOne(() => Event, { primary: true })
   @JoinColumn()
-  eventID!: string
+  event!:Event 
 }

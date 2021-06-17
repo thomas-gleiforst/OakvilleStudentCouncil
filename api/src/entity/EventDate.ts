@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne } from 'typeorm'
+import { Entity, PrimaryColumn, ManyToOne, Column } from 'typeorm'
 import { Event } from './Event'
 
 @Entity()
@@ -6,7 +6,13 @@ export class EventDate {
   @PrimaryColumn('timestamptz')
   eventDate!: Date
 
-  @ManyToOne(() => Event, (event: Event) => event.eventDate, {
+  @Column({type: "text", nullable: true})
+  address!: string | null
+
+  @Column({type: "text"})
+  room!: string
+
+  @ManyToOne(() => Event, (event: Event) => event.dates, {
     primary: true,
   })
   event!: Event

@@ -1,9 +1,7 @@
 import { Router, Request, Response } from "express"
 import { getConnection, getRepository } from "typeorm"
 
-import { Event } from "../entity/Event"
 import { Attends } from "../entity/Attends"
-import { Locations } from "../entity/Locations"
 import { QRCodes } from "../entity/QRCodes"
 import { User } from "../entity/User"
 
