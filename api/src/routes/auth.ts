@@ -38,7 +38,9 @@ router.get(
   }
 )
 
-// TODO: Logout needs to be tested
+// Currently does not do anything since JWTs are client-side tokens
+// Eventually should use a Redis store for invalidated/expired JWTs
+// when a logout occurs
 router.get("/auth/logout", (req: Request, res: Response) => {
   req.logout()
   res.send(req.user)

@@ -1,4 +1,4 @@
-import { getConnection, getRepository } from 'typeorm'
+import { getConnection } from 'typeorm'
 
 import { Event } from '../entity/Event'
 import { EventDate } from '../entity/EventDate'
@@ -8,7 +8,6 @@ import { EventDate } from '../entity/EventDate'
  * @param event - Event typeorm entity
  * @param dates - Formatted date strings
  */
-// TODO: Figure out how we wanna store dates
 const insertEventDates = async (event: Event, dates: any) => {
   const eventDateRepository = getConnection().getRepository(EventDate)    
 

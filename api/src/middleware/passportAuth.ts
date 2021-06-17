@@ -29,7 +29,7 @@ passport.use(
             firstName: profile.name && profile.name.givenName,
             middleName: profile.name && profile.name.middleName,
             lastName: profile.name && profile.name.familyName,
-            loginDate: new Date(Date.now()).toISOString(),
+            loginDate: new Date(Date.now()),
             points: 0,
             role: "student",
           })

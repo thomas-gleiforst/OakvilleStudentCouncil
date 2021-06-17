@@ -17,9 +17,6 @@ export class User {
   @Column({ type: "text" })
   lastName!: string
 
-  @Column("timestamp")
-  loginDate!: Date
-
   @CreateDateColumn()
   joinDate!: Date
 

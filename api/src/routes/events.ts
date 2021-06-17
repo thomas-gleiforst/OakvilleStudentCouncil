@@ -1,13 +1,13 @@
-import { Router, Request, Response } from 'express'
-import { getConnection, getRepository } from 'typeorm'
+import { Router, Request, Response } from "express"
+import { getConnection, getRepository } from "typeorm"
 
-import { Event } from '../entity/Event'
-import { Attends } from '../entity/Attends'
-import { EventDate } from '../entity/EventDate'
-import { Locations } from '../entity/Locations'
-import { QRCodes } from '../entity/QRCodes'
+import { Event } from "../entity/Event"
+import { Attends } from "../entity/Attends"
+import { EventDate } from "../entity/EventDate"
+import { Locations } from "../entity/Locations"
+import { QRCodes } from "../entity/QRCodes"
 
-import { insertEventDates } from '../utils/insertEventDates'
+import { insertEventDates } from "../utils/insertEventDates"
 
 const router = Router()
 
@@ -22,8 +22,7 @@ const router = Router()
  * room
  * points
  */
-// TODO: Allow frontend to supply multiple date
-router.post('/event', async (req, res) => {
+router.post("/event", async (req, res) => {
   const request = req.body
   //creates event in Events Table
   const eventRepository = getRepository(Event)
@@ -36,7 +35,11 @@ router.post('/event', async (req, res) => {
   const newEventID: string = event.eventID
 
   //Sets date and eventID into Event_Dates table
-  await insertEventDates(event, request.eventDates)
+  try {
+    await insertEventDates(event, request.eventDates)
+  } catch (error) {
+    res.status(500).send(error)
+  }
 
   await getConnection()
     .createQueryBuilder()
@@ -75,12 +78,11 @@ router.post('/event', async (req, res) => {
 /**
  * Returns Event entity
  */
-// TODO: Refactor to GET request
-router.get('/event/all', async (req: Request, res: Response) => {
+router.get("/event/all", async (req: Request, res: Response) => {
   const eventDetails = await getConnection()
     .getRepository(Event)
-    .createQueryBuilder('event')
-    .leftJoinAndSelect('event.eventDate','eventDate')
+    .createQueryBuilder("event")
+    .leftJoinAndSelect("event.eventDate", "eventDate")
     .getMany()
     .catch((error) => {
       console.log(error)
@@ -95,14 +97,13 @@ router.get('/event/all', async (req: Request, res: Response) => {
  * Requires these values in the request
  * eventID
  */
-// TODO: Return more event details
-router.get('/event/:eventID', async (req: Request, res: Response) => {
+router.get("/event/:eventID", async (req: Request, res: Response) => {
   const request = req.params
   const eventDetails = await getConnection()
     .createQueryBuilder()
-    .select('event')
-    .from(Event, 'event')
-    .where('event.eventID = :givenEventID', {
+    .select("event")
+    .from(Event, "event")
+    .where("event.eventID = :givenEventID", {
       givenEventID: request.eventID,
     })
     .getOne()
@@ -111,7 +112,16 @@ router.get('/event/:eventID', async (req: Request, res: Response) => {
       return res.send(error)
     })
 
-  return res.send(eventDetails)
+  const eventDates = await getRepository(EventDate).find({
+    where: { event: eventDetails },
+  })
+
+  const returnObject = {
+    ...eventDetails,
+    eventDates: eventDates,
+  }
+
+  return res.send(returnObject)
 })
 
 /**
@@ -120,15 +130,15 @@ router.get('/event/:eventID', async (req: Request, res: Response) => {
  * eventID
  * eventDesc - updated details for event
  */
-router.put('/event/update', async (req: Request, res: Response) => {
+router.put("/event/update", async (req: Request, res: Response) => {
   const request = req.body
 
   const event = await getConnection()
     .createQueryBuilder()
     .update(Event)
     .set({ eventDesc: request.eventDesc })
-    .where('eventID = :eventID', { eventID: request.eventID })
-    .returning(['eventID', 'eventName', 'event_desc'])
+    .where("eventID = :eventID", { eventID: request.eventID })
+    .returning(["eventID", "eventName", "event_desc"])
     .execute()
     .catch((error) => {
       console.log(error)
@@ -144,21 +154,21 @@ router.put('/event/update', async (req: Request, res: Response) => {
  * eventName - updated name for event
  * eventID
  */
-router.put('/event/update', async (req: Request, res: Response) => {
+router.put("/event/update", async (req: Request, res: Response) => {
   const request = req.body
 
   await getConnection()
     .createQueryBuilder()
     .update(Event)
     .set({ eventName: request.eventName })
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
       return res.send(error)
     })
 
-  return res.send('Updated event name')
+  return res.send("Updated event name")
 })
 
 /**
@@ -169,54 +179,60 @@ router.put('/event/update', async (req: Request, res: Response) => {
 
 //Returns all attendees of the event
 // TODO: Nicer output
-router.post('/event/:eventID/attendees', async (req: Request, res: Response) => {
-  const request = req.params
+router.post(
+  "/event/:eventID/attendees",
+  async (req: Request, res: Response) => {
+    const request = req.params
 
-  const attendees = await getConnection()
-    .createQueryBuilder()
-    .select('attends')
-    .from(Attends, 'attends')
-    .where('attends.eventID = :eventID', { eventID: request.eventID })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
+    const attendees = await getConnection()
+      .createQueryBuilder()
+      .select("attends")
+      .from(Attends, "attends")
+      .where("attends.eventID = :eventID", { eventID: request.eventID })
+      .execute()
+      .catch((error) => {
+        console.log(error)
+        return res.send(error)
+      })
 
-  console.log(attendees)
-  return res.send(attendees)
-})
+    console.log(attendees)
+    return res.send(attendees)
+  }
+)
 
-router.post("/event/:eventID/locations", async (req: Request, res: Response) => {
-  const request = req.params
+router.post(
+  "/event/:eventID/locations",
+  async (req: Request, res: Response) => {
+    const request = req.params
 
-  const location = await getConnection()
-    .createQueryBuilder()
-    .select("locations")
-    .from(Locations, "locations")
-    .where("locations.eventID = :eventID", { eventID: request.eventID })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
+    const location = await getConnection()
+      .createQueryBuilder()
+      .select("locations")
+      .from(Locations, "locations")
+      .where("locations.eventID = :eventID", { eventID: request.eventID })
+      .execute()
+      .catch((error) => {
+        console.log(error)
+        return res.send(error)
+      })
 
-  return res.send(location)
-})
+    return res.send(location)
+  }
+)
 
 /**
  * Deletes event from the database
  * POST Request
  * eventID
  */
-router.delete('/event/delete', async (req: Request, res: Response) => {
+router.delete("/event/delete", async (req: Request, res: Response) => {
   const request = req.body
 
   const result = await getConnection()
     .createQueryBuilder()
     .delete()
     .from(Attends)
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -227,14 +243,14 @@ router.delete('/event/delete', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(EventDate)
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
 
   await getConnection()
     .createQueryBuilder()
     .delete()
     .from(QRCodes)
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -245,7 +261,7 @@ router.delete('/event/delete', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(Locations)
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -256,7 +272,7 @@ router.delete('/event/delete', async (req: Request, res: Response) => {
     .createQueryBuilder()
     .delete()
     .from(Event)
-    .where('eventID = :eventID', { eventID: request.eventID })
+    .where("eventID = :eventID", { eventID: request.eventID })
     .execute()
     .catch((error) => {
       console.log(error)
@@ -265,7 +281,7 @@ router.delete('/event/delete', async (req: Request, res: Response) => {
 
   // TODO: Send back event id and event name deleted
 
-  res.send('Deleted event')
+  res.send("Deleted event")
 })
 
 export default router

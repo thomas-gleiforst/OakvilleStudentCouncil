@@ -3,7 +3,7 @@ import { Event } from './Event'
 
 @Entity()
 export class EventDate {
-  @PrimaryColumn('timestamp')
+  @PrimaryColumn('timestamptz')
   eventDate!: Date
 
   @ManyToOne(() => Event, (event: Event) => event.eventDate, {
