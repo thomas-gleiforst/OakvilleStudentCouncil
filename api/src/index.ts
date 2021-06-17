@@ -1,5 +1,5 @@
 import cors from "cors"
-import express from "express"
+import express, { response } from "express"
 import "reflect-metadata"
 import { createConnection } from "typeorm"
 
@@ -18,6 +18,12 @@ createConnection().then((connection) => {
   app.use(passport.initialize())
 
   // Routes
+  app.get(
+    "/protected",
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => res.send(req.user)
+  )
+
   app.use(authApi)
   app.use(userApi)
   app.use(eventApi)

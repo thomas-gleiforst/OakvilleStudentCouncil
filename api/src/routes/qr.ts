@@ -79,8 +79,9 @@ router.post("/markAttended", async (req: Request, res: Response) => {
  * POST Request
  * eventId
  */
-router.post("/viewBarcode", async (req: Request, res: Response) => {
-  const request = req.body
+// TODO: Only admins allowed to get QR codes
+router.post("/:eventID/qr", async (req: Request, res: Response) => {
+  const request = req.params
 
   const viewQRCode = await getConnection()
     .createQueryBuilder()
@@ -96,21 +97,5 @@ router.post("/viewBarcode", async (req: Request, res: Response) => {
   return res.send(viewQRCode)
 })
 
-router.post("/viewLocations", async (req: Request, res: Response) => {
-  const request = req.body
-
-  const location = await getConnection()
-    .createQueryBuilder()
-    .select("locations")
-    .from(Locations, "locations")
-    .where("locations.eventID = :eventID", { eventID: request.eventID })
-    .execute()
-    .catch((error) => {
-      console.log(error)
-      return res.send(error)
-    })
-
-  return res.send(location)
-})
 
 export default router

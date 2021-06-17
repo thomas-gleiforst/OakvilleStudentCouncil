@@ -23,7 +23,7 @@ const router = Router()
  * points
  */
 // TODO: Allow frontend to supply multiple date
-router.post('/createEvent', async (req, res) => {
+router.post('/event', async (req, res) => {
   const request = req.body
   //creates event in Events Table
   const eventRepository = getRepository(Event)
@@ -75,8 +75,8 @@ router.post('/createEvent', async (req, res) => {
 /**
  * Returns Event entity
  */
-//Returns event details for the event calendar
-router.get('/events', async (req: Request, res: Response) => {
+// TODO: Refactor to GET request
+router.get('/event/all', async (req: Request, res: Response) => {
   const eventDetails = await getConnection()
     .getRepository(Event)
     .createQueryBuilder('event')
@@ -96,8 +96,8 @@ router.get('/events', async (req: Request, res: Response) => {
  * eventID
  */
 // TODO: Return more event details
-router.post('/eventDetails', async (req: Request, res: Response) => {
-  const request = req.body
+router.get('/event/:eventID', async (req: Request, res: Response) => {
+  const request = req.params
   const eventDetails = await getConnection()
     .createQueryBuilder()
     .select('event')
@@ -120,7 +120,7 @@ router.post('/eventDetails', async (req: Request, res: Response) => {
  * eventID
  * eventDesc - updated details for event
  */
-router.post('/events/updateDesc', async (req: Request, res: Response) => {
+router.put('/event/update', async (req: Request, res: Response) => {
   const request = req.body
 
   const event = await getConnection()
@@ -144,7 +144,7 @@ router.post('/events/updateDesc', async (req: Request, res: Response) => {
  * eventName - updated name for event
  * eventID
  */
-router.post('/events/updateName', async (req: Request, res: Response) => {
+router.put('/event/update', async (req: Request, res: Response) => {
   const request = req.body
 
   await getConnection()
@@ -169,8 +169,8 @@ router.post('/events/updateName', async (req: Request, res: Response) => {
 
 //Returns all attendees of the event
 // TODO: Nicer output
-router.post('/events/viewAttendees', async (req: Request, res: Response) => {
-  const request = req.body
+router.post('/event/:eventID/attendees', async (req: Request, res: Response) => {
+  const request = req.params
 
   const attendees = await getConnection()
     .createQueryBuilder()
@@ -187,12 +187,29 @@ router.post('/events/viewAttendees', async (req: Request, res: Response) => {
   return res.send(attendees)
 })
 
+router.post("/event/:eventID/locations", async (req: Request, res: Response) => {
+  const request = req.params
+
+  const location = await getConnection()
+    .createQueryBuilder()
+    .select("locations")
+    .from(Locations, "locations")
+    .where("locations.eventID = :eventID", { eventID: request.eventID })
+    .execute()
+    .catch((error) => {
+      console.log(error)
+      return res.send(error)
+    })
+
+  return res.send(location)
+})
+
 /**
  * Deletes event from the database
  * POST Request
  * eventID
  */
-router.post('/deleteEvent', async (req: Request, res: Response) => {
+router.delete('/event/delete', async (req: Request, res: Response) => {
   const request = req.body
 
   const result = await getConnection()
