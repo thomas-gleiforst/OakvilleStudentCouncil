@@ -1,36 +1,12 @@
-import cors from "cors"
-import express, { response } from "express"
-import "reflect-metadata"
 import { createConnection } from "typeorm"
 
-import { authApi, eventApi, qrApi, userApi } from "./routes"
-import { passport } from "./middleware/passportAuth"
+import createServer from "./createServer"
 
-// TODO: New method of catching errors + better logging
-createConnection().then((connection) => {
-  // Create and setup Express app
-  const app = express()
+createConnection().then(() => {
   const port = process.env.PORT || 8080
+  const app = createServer()
 
-  app.use(cors())
-  app.use(express.json()) // Expect a JSON response
-
-  app.use(passport.initialize())
-
-  // Routes
-  app.get(
-    "/protected",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => res.send(req.user)
-  )
-
-  app.use(authApi)
-  app.use(userApi)
-  app.use(eventApi)
-  app.use(qrApi)
-
-  // Start the server
   app.listen(port, () => {
-    console.log(`Server running at port ${port}`)
+    console.log("Starting up server!")
   })
 })

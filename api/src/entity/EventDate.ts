@@ -4,7 +4,7 @@ import { Event } from './Event'
 @Entity()
 export class EventDate {
   @PrimaryColumn('timestamptz')
-  eventDate!: Date
+  date!: Date
 
   @Column({type: "text", nullable: true})
   address!: string | null

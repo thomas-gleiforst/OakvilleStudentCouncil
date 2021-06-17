@@ -22,7 +22,7 @@ const insertEventDates = async (
 
   for (const date of dates) {
     const eventDate = new EventDate()
-    eventDate.eventDate = new Date(date)
+    eventDate.date = new Date(date)
     eventDate.event = event
     eventDate.address = location.address || null
     eventDate.room = location.room
