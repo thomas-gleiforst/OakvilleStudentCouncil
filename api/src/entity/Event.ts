@@ -13,10 +13,10 @@ export class Event {
   @PrimaryGeneratedColumn("uuid")
   id!: string
 
-  @Column({ type: "text", length: 80 })
+  @Column({ type: "text" })
   name!: string
 
-  @Column({ type: "text", length: 2048, nullable: true })
+  @Column({ type: "text", nullable: true })
   description!: string
 
   @OneToMany(() => EventDate, (eventDate) => eventDate.event)

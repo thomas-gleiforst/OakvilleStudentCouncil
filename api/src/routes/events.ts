@@ -88,7 +88,7 @@ router.get("/event/:eventID", async (req: Request, res: Response) => {
     .createQueryBuilder()
     .select("event")
     .from(Event, "event")
-    .where("event.eventID = :givenEventID", {
+    .where("event.id = :givenEventID", {
       givenEventID: request.eventID,
     })
     .getOne()

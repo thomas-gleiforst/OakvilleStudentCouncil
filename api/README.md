@@ -15,9 +15,9 @@ sudo psql -U postgres
 2. Create the dev database environment inside the psql environment.
 
 ```
-CREATE DATABASE ohsDB;
-CREATE USER ohsDev WITH PASSWORD 'admin';
-GRANT ALL PRIVILEGES ON DATABASE ohsDB TO ohsDev;
+CREATE DATABASE ohsdb;
+CREATE USER ohsdev WITH PASSWORD 'admin';
+GRANT ALL PRIVILEGES ON DATABASE ohsdb TO ohssev;
 ```
 
 3. Quit psql and log into the database as the new user to make sure it works.
